@@ -48,15 +48,6 @@ module.exports = {
             getByPage:"/api/NewCategory/page",
             delete:"/api/NewCategory/delete"
         },
-        product:{
-            getAll:"/api/Products/all",
-            getById:"/api/Products/get",
-            create:"/api/Products/create",
-            getByPage:"/api/Products/page",
-            delete:"/api/Products/delete",
-            search:"/api/Products",
-            searchByName:'/api/Products'
-        },
         product_category:{
             getAll:"/api/ProductCategories/all",
             getById:"/api/ProductCategories",
@@ -68,6 +59,9 @@ module.exports = {
         },
         project: {
             all: "/projects"
+        },
+        product: {
+            all: "/products"
         }
 
     }

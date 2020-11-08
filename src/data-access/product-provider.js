@@ -7,6 +7,16 @@ import clientUtils from '../utils/client-utils';
 var md5 = require('md5');
 export default {
 
+    getAll() {
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi('get', '/products').then(s => {
+                resolve(s);
+            }).catch(e => {
+                reject(e);
+            })
+        });
+    },
+
     getByPage(param) {
         let parameters =
             (param.pagesize ? '?pagesize=' + param.pagesize : '?pagesize=' + 10) +
@@ -47,16 +57,6 @@ export default {
                 reject(e)
             })
         })
-    },
-
-    getAll() {
-        return new Promise((resolve, reject) => {
-            clientUtils.requestApi("get", constants.api.product.getAll ,{}).then(x => {
-                resolve(x);
-            }).catch(e => {
-                reject(e);
-            })
-        });
     },
 
     createNew(param){

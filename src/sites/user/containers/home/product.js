@@ -1,15 +1,6 @@
 import React from 'react'
-import {
-    Card, CardImg, CardText, CardBody, Button,
-    CardTitle, Row, Col, Carousel, CarouselItem, CarouselControl, CarouselIndicators, CarouselCaption
-} from 'reactstrap'
-
 import Product from '../../containers/product/product';
 import OwlCarousel from 'react-owl-carousel2';
-
-
-
-const NUM_NEW_PER_SLIDE = 4
 
 class SlideNews extends React.Component {
     constructor(props) {

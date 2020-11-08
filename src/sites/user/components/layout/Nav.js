@@ -35,7 +35,7 @@ class Header extends React.Component {
     }
 
     componentDidMount() {
-        this.getAllProductCategory()
+        // this.getAllProductCategory()
     }
 
     toggle = () => {

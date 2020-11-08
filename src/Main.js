@@ -59,7 +59,7 @@ const routes = [
   },
 
   {
-    path: ["/","/tin-tuc","/tin-dang","/san-pham","/tin-tuc/chi-tiet-tin/:id","/du-an","/du-an/chi-tiet-du-an/:id"],
+    path: ["/","/tin-tuc","/tin-dang","/san-pham","/tin-tuc/chi-tiet-tin/:id","/du-an","/du-an/chi-tiet-du-an/:id", "/maps"],
     component: Loadable({
       loader: () => import('./sites/user/template/LayoutTemplate'),
       loading: Loading,

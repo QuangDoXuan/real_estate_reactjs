@@ -27,7 +27,13 @@ const routes = [
     //         loading: Loading,
     //     })
     // },
-
+    {
+        path: '/maps',
+        component: Loadable({
+            loader: () => import('./../containers/maps/Map'),
+            loading: Loading,
+        })
+    },
     {
         path: '/du-an/chi-tiet-du-an/:id',
         component: Loadable({

@@ -815,3 +815,10 @@ span.info-finish.info-icon.ver-box-detail {
   background: url(https://static.homedy.com/src/images/icon/thicong.svg) no-repeat center;
   background-size: contain;
 }
+.maps-page {
+  margin-bottom: 80px;
+  margin-top: 80px;
+  margin: 80px auto;
+  position: relative;
+  top: 54px;
+}
