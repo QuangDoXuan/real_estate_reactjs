@@ -17,8 +17,10 @@ class SlideHire extends React.Component {
     }
 
     getListHire() {
-        productProvider.getAll().then(res => {
-            console.log(res)
+        let param = {
+            type: 2
+        }
+        productProvider.getAll(param).then(res => {
             this.setState({
                 listHire: res
             })
@@ -33,7 +35,8 @@ class SlideHire extends React.Component {
             nav: true,
             rewind: true,
             autoplay: true,
-            navText: []
+            navText: [],
+            margin: 4
 
         };
          
@@ -44,12 +47,20 @@ class SlideHire extends React.Component {
         return (
             <div className='container product-news-sold'>
                  <div className="box-title-hot">
-                    <h2><a style={{fontWeight:600}} >Tin bán nhà dành cho bạn</a></h2>
+                    <h2><a style={{fontWeight:600}} >Tin cho thuê dành cho bạn</a></h2>
                 </div>
                 <OwlCarousel ref="hire" options={options} events={events} >
                     {this.state.listHire.map((item, index)=>{
                         return(
-                            <div style={{padding: '0 4px'}}><img src={item.remote_thumbnail} alt="The Last of us"/></div>
+                            <Product
+                                key={index}
+                                ProductThumbnail={item.remote_thumbnail}
+                                ProductPrice={item.price01}
+                                ProductName= {item.name}
+                                ProductSummary={item.short_description}
+                                ProductCreateDTime={item.created_at}
+                                data={item}
+                           />
                         )
                     })}
                 </OwlCarousel>

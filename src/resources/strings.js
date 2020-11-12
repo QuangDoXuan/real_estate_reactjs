@@ -61,7 +61,9 @@ module.exports = {
             all: "/projects"
         },
         product: {
-            all: "/products"
+            all: "/products",
+            detail: "/products/",
+            search: "/maps"
         }
 
     }

@@ -3,14 +3,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import FeedsTop from './feedTop'
-import SlideNews from './product'
+import SlideSell from './product'
 import SlideHire from './hire'
 import RegisterEmail from './register-email'
 import NewsContainer from './news-container'
 import Fade from 'react-reveal/Fade';
 import productProvider from '../../../../data-access/product-provider'
-
-import productCategoryProvider from '../../../../data-access/product-category-provider';
 
 class Home extends React.Component {
 
@@ -21,6 +19,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        window.scrollTo(0, 0)
     }
 
     render() {
@@ -45,11 +44,13 @@ class Home extends React.Component {
                     </Fade>
 
                     <Fade>
-                        {/* <SlideNews/> */}
+                        <SlideSell/>
                     </Fade>
+
                     <Fade>
                         <SlideHire/>
                     </Fade>
+
                     <Fade>
                         {/* <NewsContainer /> */}
                     </Fade>

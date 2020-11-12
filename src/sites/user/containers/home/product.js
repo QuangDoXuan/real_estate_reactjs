@@ -1,18 +1,40 @@
 import React from 'react'
 import Product from '../../containers/product/product';
 import OwlCarousel from 'react-owl-carousel2';
+import productProvider from '../../../../data-access/product-provider'
 
 class SlideNews extends React.Component {
     constructor(props) {
         super(props);
+        this.state={
+            listSell: []
+        }
+    }
+
+    componentDidMount(){
+        this.getListSell();
     }
 
     onClickDetail(){
         this.props.history.push({
             pathname:"/tin-dang",
-            state:{product:this.props.slideItems}
+            state:{ product:this.props.slideItems}
         })
     }
+
+    getListSell(){
+        let param = {
+            type: 1
+        }
+        productProvider.getAll(param).then(res => {
+            this.setState({
+                listSell: res
+            })
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
 
     render() {
         const options = {
@@ -31,17 +53,24 @@ class SlideNews extends React.Component {
         return (
             <div className='container product-news-sold'>
                 <div className="box-title-hot">                    
-                    <h2><a className={this.props.dataClasses?this.props.dataClasses:""} style={{fontWeight:600}} >{this.props.dataTitle? this.props.dataTitle:"Tin cho thuê dành cho bạn"}</a></h2>
+                    <h2><a className={this.props.dataClasses?this.props.dataClasses:""} style={{fontWeight:600}} >Tin bán nhà dành cho bạn</a></h2>
                 </div>
 
 
                 <OwlCarousel ref="car" options={options} events={events} >
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="The Last of us"/></div>
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="GTA V"/></div>
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="Mirror Edge"/></div>
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="The Last of us"/></div>
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="GTA V"/></div>
-                    <div style={{padding: '0 4px'}}><img src="/images/house1.jpg" alt="Mirror Edge"/></div>
+                    {this.state.listSell.map((item, index)=>{
+                        return(
+                            <Product
+                                key={index}
+                                ProductThumbnail={item.remote_thumbnail}
+                                ProductPrice={item.price01}
+                                ProductName= {item.name}
+                                ProductSummary={item.short_description}
+                                ProductCreateDTime={item.created_at}
+                                data={item}
+                           />
+                        )
+                    })}
                 </OwlCarousel>
             </div>
         )

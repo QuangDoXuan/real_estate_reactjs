@@ -42,7 +42,7 @@ export default {
 
     getById(id){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('get',constants.api.product_category.getById+"?ProductCategoryId=" + id,{}).then(x=>{
+            clientUtils.requestApi('get',"/product_categories/" + id,{}).then(x=>{
                 resolve(x)
             }).catch(e=>{
                 reject(e)

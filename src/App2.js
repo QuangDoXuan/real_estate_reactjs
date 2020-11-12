@@ -5,9 +5,11 @@ import userProvider from "./data-access/user-provider";
 import constants from "./resources/strings";
 import { BrowserRouter } from 'react-router-dom'
 import Main from './Main';
+import ScrollToTop from './ScrollToTop'
 // import Test from './containers/Test/Test';
 const AppMain = () => {
   return <BrowserRouter>
+    <ScrollToTop />
     <Main />
     {/* <Test /> */}
   </BrowserRouter>

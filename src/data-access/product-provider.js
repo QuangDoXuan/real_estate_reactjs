@@ -7,9 +7,20 @@ import clientUtils from '../utils/client-utils';
 var md5 = require('md5');
 export default {
 
-    getAll() {
+    getAll(param) {
         return new Promise((resolve, reject) => {
-            clientUtils.requestApi('get', '/products').then(s => {
+            let parameters = '?type=' + param.type
+            clientUtils.requestApi('get', '/products' + parameters, {}).then(s => {
+                resolve(s);
+            }).catch(e => {
+                reject(e);
+            })
+        });
+    },
+
+    getById(id) {
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi('get', constants.api.product.detail + id, {}).then(s => {
                 resolve(s);
             }).catch(e => {
                 reject(e);
@@ -26,6 +37,17 @@ export default {
                 resolve(x);
             }).catch(e => {
                 reject(e);
+            })
+        })
+    },
+
+    searchByLocation(param) {
+        let parameters = `?south=${param.south || null}&north=${param.north || null}&west=${param.west||null }&east=${param.east || null}`
+        return new Promise((resolve,reject)=>{
+            clientUtils.requestApi('get','/maps' + parameters,{}).then(res=>{
+                resolve(res)
+            }).catch(e=>{
+                reject(e)
             })
         })
     },

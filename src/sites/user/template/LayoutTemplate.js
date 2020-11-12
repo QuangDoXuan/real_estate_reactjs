@@ -110,6 +110,12 @@ class LayoutTemplate extends Component {
                         routes.map((route, key) => {
                             if (route.component)
                                 return <Route key={key}
+                                    // onUpdate={() => window.scrollTo(0, 0)}
+                                    onChange={(prevState, nextState) => {
+                                        if (nextState.location.action !== "POP") {
+                                          window.scrollTo(0, 0);
+                                        }
+                                    }}
                                     path={route.path}
                                     render={props => (
                                         <route.component {...props} />

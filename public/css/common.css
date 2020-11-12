@@ -229,9 +229,9 @@ a:hover{
 }
 .span-common{
     position: absolute;
-    bottom: 16px;
-    right: 32px;
-    background: #52514e;
+    bottom: 0;
+    right: 15px;
+    background: #2d2c29;
     padding: 0 8px;
     line-height: 32px;
     cursor: pointer;
@@ -506,7 +506,7 @@ p.title-item-new {
 }
 .box-filter .utility {
     padding: 8px 20px;
-    top: 56px;
+    top: 119px;
     background: #f9f9f9;
     border-bottom: 1px solid #e1e1e1;
     z-index: 99;
