@@ -28,7 +28,7 @@ import ConfirmDialog from '../../components/confirm';
 import stringUtils from '../../../../resources/stringUtils'
 
 import axios from 'axios';
-const resource_url = "https://localhost:44334"
+const resource_url = "http://localhost:3001"
 
 class News extends React.Component {
   constructor(props) {
@@ -54,7 +54,7 @@ class News extends React.Component {
   }
 
   loadPage() {
-    this.getAllProducts()
+    // this.getAllProducts()
     this.getByPage();
   }
 
@@ -75,17 +75,16 @@ class News extends React.Component {
 
   getAllProducts() {
     this.setState({ progress: true })
-    productProvider.getAll().then(res => {
-      if (res.Code && res.Code == 200) {
+
+    let param = {
+      page: 1,
+      per: 10,
+      type: "0"
+    }
+    productProvider.getByPage(param).then(res => {
         this.setState({
-          listProducts: res.Data
+          listProducts: res
         })
-      }
-      else {
-        this.setState({
-          listProducts: []
-        })
-      }
       this.setState({ progress: false })
     }).catch(e => {
       console.log(e)
@@ -96,16 +95,17 @@ class News extends React.Component {
   getByPage() {
 
     let param = {
-      pagesize: this.state.size,
-      pagenumber: this.state.page
+      page: this.state.page,
+      per: this.state.size,
+      type: "0"
     }
 
     productProvider.getByPage(param).then(res => {
-      let stt = 1 + (param.pagenumber) * param.pagesize;
+      let stt = 1 + (param.page) * param.per;
       this.setState({
-        listProducts: res.Data.Results,
+        listProducts: res,
         stt,
-        total: this.state.listProducts.length,
+        total: res.length,
         // totalPerPage:res.Data.TotalNumberOfRecords
       })
     }).catch(e => {
@@ -140,18 +140,13 @@ class News extends React.Component {
   delete = (type) => {
     this.setState({ confirmDialog: false })
     if (type == 1) {
-      productProvider.deleteProduct(this.state.tempDelete.ProductId).then(res => {
-        if (res.Code == 200) {
-          toast.success("Xóa thành công", {
-            position: toast.POSITION.TOP_RIGHT
-          })
-          this.loadPage()
-        }
-        else {
-          toast.error("Xóa thất bại", {
-            position: toast.POSITION.TOP_RIGHT
-          })
-        }
+      productProvider.deleteProduct(this.state.tempDelete.id).then(res => {
+        toast.success("Xóa thành công", {
+          position: toast.POSITION.TOP_RIGHT
+        })
+        this.loadPage()
+      }).catch(e=>{
+        console.log(e)
       })
     }
 
@@ -239,7 +234,7 @@ class News extends React.Component {
                 <TableCell>STT</TableCell>
                 <TableCell>Tên sản phẩm </TableCell>
                 <TableCell>Giá</TableCell>
-                <TableCell>Giá/m2</TableCell>
+                {/* <TableCell>Loại</TableCell> */}
                 <TableCell>Diện tích(m2)</TableCell>
                 <TableCell>Hình ảnh</TableCell>
                 <TableCell>Tùy chọn</TableCell>
@@ -247,15 +242,15 @@ class News extends React.Component {
             </TableHead>
             <TableBody>
 
-              {listProducts.map((item, index) => {
+              {listProducts.length > 0 ? listProducts.map((item, index) => {
                 return (<TableRow key={index}>
-                  <TableCell>{index + stt}</TableCell>
-                  <TableCell onClick={()=>this.modalDetailImage(item)} >{item.ProductName}</TableCell>
-                  <TableCell>{Number(item.ProductPrice).formatMoney()}</TableCell>
-                  <TableCell>{Number(item.ProductPriceMeter).formatMoney()}</TableCell>
-                  <TableCell >{item.ProductArea}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell onClick={()=>this.modalDetailImage(item)} >{item.name}</TableCell>
+                  {/* <TableCell>{item.price01}</TableCell> */}
+                  <TableCell>{item.price01}</TableCell>
+                  <TableCell >{item.area}</TableCell>
 
-                  <TableCell><img style={{ width: 150, margin: '4px 0px' }} src={resource_url + item.ProductThumbnail} /></TableCell>
+                  <TableCell><img style={{ width: 150, margin: '4px 0px' }} src={ (item.thumnail && item.thumnail.url ? resource_url + item.thumnail.url : item.remote_thumbnail)} /></TableCell>
 
                   <TableCell className="icon-sidebar">
                     <Tooltip title="Sửa">
@@ -271,7 +266,7 @@ class News extends React.Component {
                   </TableCell>
 
                 </TableRow>)
-              })}
+              }) : 'Khong co du lieu'}
 
             </TableBody>
             <TableFooter>

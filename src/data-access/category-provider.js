@@ -7,10 +7,9 @@ import clientUtils from '../utils/client-utils';
 var md5 = require('md5');
 export default {
 
-    getAll(param) {
+    getAll() {
         return new Promise((resolve, reject) => {
-            let parameters = '?type=' + param.type
-            clientUtils.requestApi('get', '/products' + parameters, {}).then(s => {
+            clientUtils.requestApi('get', '/categories', {}).then(s => {
                 resolve(s);
             }).catch(e => {
                 reject(e);
@@ -31,8 +30,8 @@ export default {
     getByPage(param) {
         let parameters =
             (param.type ? '?type=' + param.type : '?type=' + 0) +
-            (param.page ? '&page=' + param.page : '&page=' + 1) +
-            (param.per ? '&per=' + param.per : '&per=' + - 10)
+            (param.page ? '&page=' + param.page : '&page=' + 10) +
+            (param.per ? '&per=' + param.per : '&per=' + - 1)
         return new Promise((resolve, reject) => {
             clientUtils.requestApi("get", '/admin/products' + parameters, {}).then(x => {
                 resolve(x);
@@ -94,7 +93,7 @@ export default {
 
     deleteProduct(id){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('delete',"/admin/products/" + id).then(x=>{
+            clientUtils.requestApi('delete',constants.api.product.delete+"?ProductId="+id).then(x=>{
                 resolve(x)
             }).catch(e=>{
                 reject(e)

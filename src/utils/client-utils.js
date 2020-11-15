@@ -67,7 +67,7 @@ String.prototype.getServiceUrl =
 
 export default {
     // auth: "eyJhbGciOiJSUzI1NiJ9.eyJyb2xlIjoiaXNvZmhDYXJlIiwiY3JlYXRlZCI6MTU1MzA3MDc0Mzc4NiwidHlwZSI6MCwidXNlcklkIjo1NX0.k8B3Cm5M-22ckpKk3W1fhgHoHq7LGVdKIjhLZUl0abKES5nSCC5RhupsRXctTK6skQMvCZ8f-TuZGbDcNgdlsb_Kc0ogFmaPmGI4ao7MKrCb9nCr4fxztUN0ABWUERA1wnQNFljgVR9FIrNKnf2hx_aTHIrwS9Ol1JOaKJVnj83cK5vg2ExvN7ralb1yoyuHEZoODlDBVHCIxeG5X3oaJE6-BKfcafXau_cmYz-Ovg31VtZpu1lCffaOj2uLSefPBvqfL2d2U1sswiUrV95rankTjOomr31lP4xiCN71-7YX_6Hx7EraRFhmclmaOjGUWM83VB0fvY8hIEHiE8yB8w",
-    auth: "",
+    auth: localStorage.getItem('token'),
     serverApi: server_url,
     response: {
         ok(data, message) {
@@ -108,7 +108,7 @@ export default {
 
     requestApi(methodType, url, body) {
         return new Promise((resolve, reject) => {
-            console.log("Request url " + url + " with token: " + this.auth);
+            console.log("Request url " + url + " with token: " + localStorage.getItem('token'));
             var dataBody = "";
             if (!body)
                 body = {};
@@ -117,7 +117,7 @@ export default {
                 {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': 'bearer ' + this.auth,
+                    'Authorization': 'bearer ' + localStorage.getItem('token'),
                     // 'MobileMode':'user'
                 }, dataBody).then(s => {
                     s.json().then(val => {

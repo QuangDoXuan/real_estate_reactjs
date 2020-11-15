@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import constants from '../../../../resources/strings'
+import constants from '../../../../resources/strings';
+import client_utils from '../../../../utils/client-utils'
 
 //provider
 import dataCacheProvider from '../../../../data-access/datacache-provider'
@@ -29,7 +30,7 @@ class Login extends React.Component {
     }
 
     componentWillMount() {
-        this.checkUserLogin()
+        this.checkUserLogin();
     }
 
     checkUserLogin() {
@@ -47,8 +48,10 @@ class Login extends React.Component {
           password: password
         }
         userProvider.login(body).then(res=>{
-          this.props.dispatch({ type: constants.action.action_user_login, value: res.user })
-          this.props.dispatch({ type: 'SAVE_TOKEN', value: res.token })
+          localStorage.setItem('user', JSON.stringify(res.user) )
+          localStorage.setItem('token', res.token)
+          this.props.dispatch({ type: constants.action.action_user_login, value: res.user})
+          // // this.props.dispatch({ type: 'SAVE_TOKEN', value: res.token })
           dataCacheProvider.save("", constants.key.storage.current_account, res.user).then(s => {
               this.props.history.push("/admin/dashboard");
           });

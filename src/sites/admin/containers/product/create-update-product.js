@@ -23,12 +23,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 //data-access
 import imageProvider from '../../../../data-access/image-provider'
-import cateProvider from '../../../../data-access/product-category-provider'
+import cateProvider from '../../../../data-access/category-provider'
 
 
 import axios from 'axios';
+import projectProvider from '../../../../data-access/project-provider';
 
-const resource_url = "https://localhost:44334"
+const resource_url = "http://localhost:3001"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -40,23 +41,27 @@ class ModalAddUpdate extends React.Component {
         this.state = {
             open: true,
             dataProduct: this.props.data,
-            ProductId:this.props.data&&this.props.data.ProductId?this.props.data.ProductId:'',
-            ProductCategoryId: this.props.data && this.props.data.ProductCategoryId ? this.props.data.ProductCategoryId : '',
-            ProductName: this.props.data && this.props.data.ProductName ? this.props.data.ProductName : '',
-            ProductSummary: this.props.data && this.props.data.ProductSummary ? this.props.data.ProductSummary : '',
-            ProductPrice: this.props.data && this.props.data.ProductPrice ? this.props.data.ProductPrice : '',
-            ProductArea: this.props.data && this.props.data.ProductArea ? this.props.data.ProductArea : '',
-            ProductBedrooms: this.props.data && this.props.data.ProductBedrooms ? this.props.data.ProductBedrooms : '',
-            ProductBathrooms: this.props.data && this.props.data.ProductBedrooms ? this.props.data.ProductBedrooms : '',
-            ProductAddress: this.props.data && this.props.data.ProductAddress ? this.props.data.ProductAddress : ' ',
+            ProductId:this.props.data&&this.props.data.id?this.props.data.id:'',
+            ProductCategoryId: this.props.data && this.props.data.category_id ? this.props.data.category_id : '',
+            ProductName: this.props.data && this.props.data.name ? this.props.data.name : '',
+            ProductSummary: this.props.data && this.props.data.description ? this.props.data.description : '',
+            ProductPrice: this.props.data && this.props.data.price01 ? this.props.data.price01 : '',
+            ProductArea: this.props.data && this.props.data.area ? this.props.data.area : '',
+            ProductBedrooms: this.props.data && this.props.data.bed_rooms ? this.props.data.bed_rooms : '',
+            ProductAddress: this.props.data && this.props.data.address ? this.props.data.address : ' ',
             OrderNo: this.props.data && this.props.data.OrderNo ? this.props.data.OrderNo : null,
-            ProductPriceMeter: this.props.data && this.props.data.ProductPriceMeter ? this.props.data.ProductPriceMeter : '',
-            ProductFloors: this.props.data && this.props.data.ProductFloors ? this.props.data.ProductFloors : '',
-            ProductThumbnail: this.props.data && this.props.data.ProductThumbnail ? this.props.data.ProductThumbnail : ' ',
+            ProductPriceMeter: this.props.data && this.props.data.price01 ? this.props.data.price01 : '',
+            ProductFloors: this.props.data && this.props.data.floors ? this.props.data.floors : '',
+            ProductThumbnail: this.props.data && this.props.data.remote_thumbnail ? this.props.data.remote_thumbnail : ' ',
             ProductImages:this.props.data&&this.props.data.ProductImages? this.props.data.ProductImages: [],
             imageFake:'',
             listCatProd:[],
-            images:[]
+            images:[],
+            projects:[],
+            projectId: this.props.data&&this.props.data.project_id?this.props.data.project_id:'',
+            lng:this.props.data&&this.props.data.lon? this.props.data.lon: '',
+            lat:this.props.data&&this.props.data.lat? this.props.data.lat: '',
+            thumnail: this.props.data&&this.props.data.thumnail&&this.props.data.thumnail?this.props.data.thumnail:''
         }
         this.data = JSON.stringify(this.props.data);
         this.data2 = this.props.data;
@@ -64,31 +69,44 @@ class ModalAddUpdate extends React.Component {
 
     componentDidMount() {
         this.getAllProductCategory()
+        this.getAllProjects()
     }
 
     handleImageChange = (e) => {
+        console.log(e.target.files[0])
         this.setState({
             ProductThumbnail: e.target.files[0],
+            thumnail: e.target.files[0],
             imageName: e.target.files[0].name,
             imageFake: URL.createObjectURL(e.target.files[0])
         })
        
     };
 
-    onChangeHandler=event=>{
+    onChangeHandler= event =>{
+        // console.log(event.target.files)
         this.setState({
-         images: event.target.files,
+            images: event.target.files,
         })
     }
 
     getAllProductCategory(){
         cateProvider.getAll().then(res=>{
             console.log(res)
-            if(res.Code==200){
-                this.setState({
-                    listCatProd:res.Data
-                })
-            }
+            this.setState({
+                listCatProd:res
+            })
+        }).catch(e=>{
+            console.log(e)
+        })
+    }
+
+    getAllProjects(){
+        projectProvider.getAll().then(res=>{
+            console.log(res)
+            this.setState({
+                projects: res
+            })
         }).catch(e=>{
             console.log(e)
         })
@@ -98,125 +116,79 @@ class ModalAddUpdate extends React.Component {
         this.props.callbackOff()
     };
 
-    postImages=()=>{
-        let imageUpload =new FormData();
-        imageUpload.append('ProductId',this.state.ProductId)
-        // imageUpload.append('images',this.state.images)
-        for(var x = 0; x<this.state.images.length; x++) {
-            imageUpload.append('images', this.state.images[x])
-        }
-
-        axios({
-            url: "https://localhost:44334/api/Products/images/upload",
-            method: 'POST',
-            data: imageUpload,
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-                // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
-            }
-        })
-            .then(res => {
-                console.log(res)
-                this.handleClose()
-            })
-            .catch(e => {
-                this.handleClose()
-            })
-    }
-
-
     create = () => {
         const { dataProduct } = this.state;
         let formData = new FormData();
- 
+        formData.append('category_id', this.state.ProductCategoryId)
+        formData.append('name', this.state.ProductName)
+        formData.append('description', this.state.ProductSummary)
+        formData.append('price01', this.state.ProductPrice)
+        formData.append('area', this.state.ProductArea)
+        formData.append('bed_rooms', this.state.ProductBedrooms)
+        formData.append('address', this.state.ProductAddress)
+        formData.append('thumnail', this.state.thumnail)
+        formData.append('project_id', this.state.projectId)
+        formData.append('floors', this.state.ProductFloors)
+        formData.append('lon', this.state.lng)
+        formData.append('lat', this.state.lat)
+        for (const file of this.state.images) {
+            formData.append('product_images[]', file, file.name);
+        }
 
-        formData.append('ProductId',this.state.ProductId)
-        formData.append('ProductCategoryId', this.state.ProductCategoryId)
-        formData.append('ProductName', this.state.ProductName)
-        formData.append('ProductSummary', this.state.ProductSummary)
-        formData.append('ProductPrice', this.state.ProductPrice)
-        formData.append('ProductArea', this.state.ProductArea)
-        formData.append('ProductBedrooms', this.state.ProductBedrooms)
-        formData.append('ProductBathrooms', this.state.ProductBathrooms)
-        formData.append('ProductAddress', this.state.ProductAddress)
-        formData.append('OrderNo', this.state.OrderNo)
-        formData.append('ProductPriceMeter', this.state.ProductPriceMeter)
-        formData.append('ProductFloors', this.state.ProductFloors)
-        formData.append('ProductThumbnail', this.state.ProductThumbnail)
-        formData.append('IsHotProduct', true)
-        // formData.append('ProductImages',this.state.ProductImages)
-
-        if (dataProduct && dataProduct.ProductId) {
+        if (dataProduct && dataProduct.id) {
             axios({
-                url: "https://localhost:44334/api/Products/update",
+                url: "http://localhost:3001/admin/products/" + dataProduct.id,
                 method: 'PUT',
                 data: formData,
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                     // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
                 }
             })
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Cập nhật sản phẩm thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        // this.handleClose();
-                        this.postImages()
-                    }
-                    else{
-                        toast.error("Cập nhật sản phẩm không thành công!", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose()
-                    }
+            .then(res => {
+                toast.success("Cập nhật sản phẩm thành công", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
-                .catch(e => {
-                    toast.error("Cập nhật sản phẩm không thành công!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
-                    this.handleClose()
+                this.handleClose()
+            })
+            .catch(e => {
+                toast.error("Cập nhật sản phẩm không thành công!", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
+                this.handleClose()
+            })
         } else {
 
             axios({
-                url: "https://localhost:44334/api/Products/create",
+                url: "http://localhost:3001/admin/products",
                 method: 'POST',
                 data: formData,
                 headers: {
                     //Accept: 'application/json',
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',
-                    // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Tạo mới sản phẩm thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        // this.handleClose()
-                        this.postImages()
-                    }
+            .then(res => {
+                console.log(res)
+                    toast.success("Tạo mới sản phẩm thành công", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
-                .catch(e => {
-                    toast.error("Tạo mới sản phẩm không thành công!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
-                    this.handleClose()
+                this.handleClose()
+            })
+            .catch(e => {
+                toast.error("Tạo mới sản phẩm không thành công!", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
+                this.handleClose()
+            })
 
         }
 
     }
-
-
-  
-
 
     render() {
         const { classes } = this.props
@@ -232,12 +204,12 @@ class ModalAddUpdate extends React.Component {
             >
                 <ValidatorForm onSubmit={this.create}>
                     {/* <DialogTitle>{content}</DialogTitle> */}
-                    <DialogTitle className={classes.titleDialog}> {this.props.data.ProductId ? 'Cập nhật sản phẩm' : 'Thêm mới sản phẩm'}</DialogTitle>
+                    <DialogTitle className={classes.titleDialog}> {this.props.data.id ? 'Cập nhật sản phẩm' : 'Thêm mới sản phẩm'}</DialogTitle>
                     <DialogContent>
                         <Grid container>
 
-                        <Grid item xs={12} md={2}>Mã sản phẩm(*)</Grid>
-                            <Grid item xs={12} md={4} className={classes.pdr40}>
+                        {/* <Grid item xs={12} md={2}>Mã sản phẩm(*)</Grid> */}
+                            {/* <Grid item xs={12} md={4} className={classes.pdr40}>
                                 <TextValidator
                                     value={ProductId}
                                     placeholder="Nhập mã sản phẩm"
@@ -249,7 +221,7 @@ class ModalAddUpdate extends React.Component {
                                         this.setState({ ProductId: event.target.value });
                                     }}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12} md={2}>Tên sản phẩm(*)</Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
@@ -283,7 +255,7 @@ class ModalAddUpdate extends React.Component {
                                             src="/image-icon.png" />
                                     </Button>
                                 </label>
-                                {this.props.data&&this.props.data.ProductId?<img src={resource_url+ProductThumbnail} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
+                                {this.props.data && this.props.data.id?<img src={resource_url + this.state.thumnail.url} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
                                 : <img src={this.state.imageFake} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
                             }
                                 
@@ -303,9 +275,32 @@ class ModalAddUpdate extends React.Component {
                                         this.setState({ProductCategoryId:e.target.value})
                                     }}
                                 >
-                                    {listCatProd.map((item,index)=>{
+                                    {listCatProd.length > 0 && listCatProd.map((item,index)=>{
                                         return(
-                                            <MenuItem key={index} value={item.ProductCategoryId}>{item.ProductCategoryTitle}</MenuItem>
+                                            <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
+                                        )
+                                            
+                                    })}
+                                   
+                                    
+                                </Select>
+                            </Grid>
+
+                            <Grid item xs={12} md={2}>Dự án </Grid>
+                            <Grid item xs={12} md={4} className={classes.pdr40}>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    className={classes.textField}
+                                    value={this.state.projectId}
+                                    onChange={(e)=>{
+                                        this.data2.projecId = e.target.value;
+                                        this.setState({projectId:e.target.value})
+                                    }}
+                                >
+                                    {this.state.projects.length > 0 && this.state.projects.map((item,index)=>{
+                                        return(
+                                            <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
                                         )
                                             
                                     })}
@@ -318,10 +313,10 @@ class ModalAddUpdate extends React.Component {
                             <Grid item xs={12} md={4} className={classes.pdr40}>
                                 <TextValidator
                                     value={ProductPrice}
-                                    type='number'
+                                    type='text'
                                     className={classes.textField}
                                     onChange={(event) => {
-                                        this.data2.ProductPrice = event.target.value;
+                                        // this.data2.ProductPrice = event.target.value;
                                         this.setState({ ProductPrice: event.target.value })
                                     }}
                                     validators={['required']}
@@ -360,7 +355,7 @@ class ModalAddUpdate extends React.Component {
 
                             <Grid item xs={12} md={2}>Diện tích </Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
-                                <input value={ProductArea} type="number" onChange={(event) => {
+                                <input value={ProductArea} type="text" onChange={(event) => {
                                     this.data2.ProductArea = event.target.value;
                                     this.setState({ ProductArea: event.target.value })
                                     }} className={classes.textFieldOwn} placeholder="Nhập diện tích" />
@@ -376,7 +371,7 @@ class ModalAddUpdate extends React.Component {
                                 className={classes.textFieldOwn} />
                             </Grid>
 
-                            <Grid item xs={12} md={2}>Số phòng tắm </Grid>
+                            {/* <Grid item xs={12} md={2}>Số phòng tắm </Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
                                 <input  
                                 value={ProductBathrooms} 
@@ -386,22 +381,21 @@ class ModalAddUpdate extends React.Component {
                                     this.setState({ ProductBathrooms: event.target.value })} }
                                 placeholder="Số phòng tắm" 
                                 className={classes.textFieldOwn} />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid item xs={12} md={2}>Order No</Grid>
+                            <Grid item xs={12} md={2}>lng</Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
-                                <input value={OrderNo} type="number" onChange={(event) => this.setState({ OrderNo: event.target.value })} placeholder="Độ ưu tiên" className={classes.textFieldOwn} />
+                                <input value={this.state.lng} type="number" onChange={(event) => this.setState({ lng: event.target.value })} className={classes.textFieldOwn} />
                             </Grid>
 
-                            <Grid item xs={12} md={2}>Giá 1m vuông</Grid>
+                            <Grid item xs={12} md={2}>lat</Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
                                 <input 
-                                value={ProductPriceMeter}
-                                 type="number" 
+                                value={this.state.lat}
+                                 type="text" 
                                  onChange={(event) => {
-                                    this.data2.ProductPriceMeter = event.target.value;
-                                     this.setState({ ProductPriceMeter: event.target.value })}}
-                                  placeholder="Giá 1m vuông" 
+                                    this.data2.lat = event.target.value;
+                                     this.setState({ lat: event.target.value })}}
                                   className={classes.textFieldOwn} />
                             </Grid>
 

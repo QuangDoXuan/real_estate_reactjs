@@ -127,7 +127,8 @@ class Home extends Component {
     
 
     componentDidMount() {
-        if(!this.props.userApp.currentUser){
+        let user = localStorage.getItem('_CURRENT_USER')
+        if(!user){
             window.location.href="/dang-nhap";
         }
         this.setState({ menus: this.getMenu() })

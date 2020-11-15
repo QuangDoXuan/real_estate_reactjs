@@ -6,11 +6,13 @@ class Header extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            isOpen: false
+            isOpen: false,
+            user: localStorage.getItem('user')
         }
     }
     componentDidMount(){
         // this.checkUserLogin();
+        console.log(JSON.parse(this.state.user))
     }
     // checkUserLogin() {
     //     if (!this.props.userApp.currentUser) {
@@ -36,6 +38,7 @@ class Header extends React.Component {
     }
    
     render() {
+        const user = JSON.parse(this.state.user)
         return (
             <header className="header-admin">
                 <div className="logo">
@@ -43,8 +46,8 @@ class Header extends React.Component {
                 </div>
                 <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div className="settings">
-                    {this.props.userApp.currentUser?
-                    <span className="user-name" onClick={this.handleOpen}>{this.props.userApp.currentUser.userName}</span>:''    
+                    {this.state.user?
+                    <span className="user-name" onClick={this.handleOpen}>{user.name}</span>:''    
                 }
                     
                     {this.state.isOpen ?
