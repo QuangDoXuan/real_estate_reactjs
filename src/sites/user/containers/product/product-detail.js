@@ -19,7 +19,8 @@ class ProductDetail extends React.Component {
             listClosed: [],
             listKeyword: [],
             productCategory: '',
-            listImage: []
+            listImage: [],
+            project: {}
         }
     }
 
@@ -41,8 +42,10 @@ class ProductDetail extends React.Component {
     }
     getProductImagesById() {
         productProvider.getById(this.props.location.state.product.id).then(res => {
+            // if()
             this.setState({
-                listImage: res.product_images.map(x=>x.name)
+                listImage: res.product_images.map(x=>x.name),
+                project: res.project
             })
         }).catch(e => {
             console.log(e)
@@ -134,6 +137,7 @@ class ProductDetail extends React.Component {
                             <div className=" product-summary product-dacdiem">
                                 <p className="title-dacdiem">Đặc điểm</p>
                                 <div className="summary-detail dacdiem-sum">
+                                    {this.state.project && this.state.project.name ? (<p className="one-row-detail"><label className="span-dacdiem">Dự án:</label>{this.state.project.name}</p>) :''}
                                     <p className="one-row-detail"><label className="span-dacdiem">Loại tin rao:</label>{this.state.productCategory.name}</p>
                                     <p className="one-row-detail"><label className="span-dacdiem">Giá:</label>{this.props.location.state.product.price01}</p>
                                     <p className="one-row-detail"><label className="span-dacdiem">Diện tích:</label> {this.props.location.state.product.area}</p>

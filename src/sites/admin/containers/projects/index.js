@@ -16,18 +16,16 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 
 //Component
-import ModalAddUpdate from './create-update-product-category'
+import ModalAddUpdate from './create-update-project'
 import ConfirmDialog from '../../components/confirm';
 
 //toast
 import { ToastContainer, toast } from 'react-toastify';
 
-//provider
-import ProductCatprovider from '../../../../data-access/product-category-provider'
-
 import moment from 'moment'
-import productCategoryProvider from '../../../../data-access/product-category-provider';
-class ProductCategory extends React.Component {
+import projectProvider from '../../../../data-access/project-provider';
+
+class Project extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -38,9 +36,8 @@ class ProductCategory extends React.Component {
       selected: [],
       progress: false,
       modalAddUpdate: false,
-      modalDetailNews: false,
-      listProductsCategory: [],
-      dataProductsCategory: {},
+      listProjects: [],
+      dataProject: {},
       tempDelete:[],
       confirmDialog:false,
       name:''
@@ -52,7 +49,7 @@ class ProductCategory extends React.Component {
   }
 
   loadPage() {
-    this.getAllNewCategory()
+    // this.getAllNewCategory()
     this.getByPage()
   }
 
@@ -71,36 +68,17 @@ class ProductCategory extends React.Component {
     });
   };
 
-  getAllNewCategory() {
-    let param = {
-      per: this.state.size,
-      page: this.state.page 
-    }
-    this.setState({progress:true})
-    ProductCatprovider.getAll(param).then(res=>{
-      this.setState({
-          listProductsCategory:res,
-          progress:false
-      })
-    }).catch(e=>{
-      console.log(e)
-      this.setState({progress:false})
-    })
-  }
-
-
-
   getByPage(){
     let param = {
       per: this.state.size,
-      page: this.state.page 
+      page: this.state.page
     }
    
-    ProductCatprovider.getByPage(param).then(res=>{
+    projectProvider.getByPage(param).then(res => {
       let stt = 1 + (param.page) * param.per;
       console.log(res)
       this.setState({
-        listProductsCategory:res,
+        listProjects:res,
         stt,
         total:res.length,
         // totalPerPage:res.Data.TotalNumberOfRecords
@@ -112,7 +90,7 @@ class ProductCategory extends React.Component {
 
   closeModal() {
     this.loadPage();
-    this.setState({ modalAddUpdate: false, modalDetailUser: false, dataProductsCategory:{} });
+    this.setState({ modalAddUpdate: false, modalDetailUser: false, dataProject:{} });
   }
 
   modalAddUpdate = () => {
@@ -124,35 +102,27 @@ class ProductCategory extends React.Component {
     
     this.setState({
       modalAddUpdate: true,
-      dataProductsCategory: data
+      dataProject: data
     })
   }
 
   modalDetail = (data) => {
     this.setState({
       modalDetailUser: true,
-      dataProductsCategory: data
+      dataProject: data
     })
   }
 
-  delete=(type)=>{
+  delete = (type)=>{
     this.setState({ confirmDialog: false })
     if(type==1){
-      ProductCatprovider.deleteProductCategory(this.state.tempDelete.ProductCategoryId).then(res=>{
-        if(res.Code == 200){
-          toast.success("Xóa thành công",{
+      projectProvider.delete(this.state.tempDelete.id).then(res=>{
+        toast.success("Xóa thành công",{
             position:toast.POSITION.TOP_RIGHT
-          })
-          this.loadPage()
-        }
-        else{
-          toast.error("Xóa thất bại",{
-            position:toast.POSITION.TOP_RIGHT
-          })
-        }
+        })
+        this.loadPage()
       })
     }
-
   }
 
   searchByName(e){
@@ -161,10 +131,10 @@ class ProductCategory extends React.Component {
     }
     else{
       this.setState({progress:true})
-      productCategoryProvider.searchByName(e.target.value).then(res=>{
+      projectProvider.searchByName(e.target.value).then(res=>{
         if(res.Code==200){
           this.setState({
-            listProductsCategory:res.Data
+            listProjects:res.Data
           })
         }
         this.setState({progress:false})
@@ -183,18 +153,18 @@ class ProductCategory extends React.Component {
 }
 
   render() {
-    const { page, size, total, progress, listProductsCategory, dataProductsCategory,stt,confirmDialog } = this.state
+    const { page, size, total, progress, listProjects, dataProject,stt,confirmDialog } = this.state
     return (
       <div>
         <div className="head-page-admin">
           <div className="title-page-admin">
-            <h5 className="title-manage-admin">Danh mục sản phẩm</h5>
+            <h5 className="title-manage-admin">Quản lý dự án</h5>
           </div>
           <div className="toolbar-admin">
             <TextField
               id="outlined-basic"
               className="input-search"
-              label="Tên loại sản phẩm"
+              label="Tên dự án"
               margin="normal"
               variant="outlined"
               onChange={(e)=>this.searchByName(e)}
@@ -209,23 +179,29 @@ class ProductCategory extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tên loại sản phẩm</TableCell>
-                <TableCell>Loại</TableCell>
-                <TableCell>Ngày tạo</TableCell>
+                <TableCell>Tên dự án</TableCell>
+                <TableCell>Hình ảnh</TableCell>
+                <TableCell>Địa chỉ</TableCell>
+                <TableCell>Giá</TableCell>
+                <TableCell>Trạng thái</TableCell>
+                <TableCell>Diện tích</TableCell>
                 {/* <TableCell>Ngày cập nhật</TableCell> */}
                 <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
 
-              {listProductsCategory.length > 0 && listProductsCategory.map((item, index) => {
+              {listProjects.length > 0 && listProjects.map((item, index) => {
                 return (
                   <TableRow key={index}>
               <TableCell>{index+stt}</TableCell>
               <TableCell onClick={(item) => this.modalDetail(item)}>{item.name}</TableCell>
                 {/* <TableCell onClick={(item) => this.modalDetail(item)}>{item.ProductCategoryTitle}</TableCell> */}
-                <TableCell onClick={(item) => this.modalDetail(item)}>{item.parent_category_type == 1 ? 'Mua bán': 'Cho thuê'}</TableCell>
-                <TableCell onClick={(item) => this.modalDetail(item)}>{moment(item.created_at).format("DD-MM-YYYY")}</TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}><img style={{minWidth: 150,width: 150, height: 150, objectFit: 'cover'}} src={item.image}/></TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}>{item.address}</TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}>{item.pricem2}</TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}>{item.status}</TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}>{item.total_area}</TableCell>
                 {/* <TableCell onClick={(item) => this.modalDetail(item)}>{moment(item.UpdateDtime).format("DD-MM-YYYY")}</TableCell> */}
                     <TableCell className="icon-sidebar">
                       <Tooltip title="Sửa">
@@ -233,11 +209,11 @@ class ProductCategory extends React.Component {
                           <img src="/images/icon/edit.svg" alt="" />
                         </IconButton>
                       </Tooltip>
-                      {/* <Tooltip title="Xóa">
+                      <Tooltip title="Xóa">
                         <IconButton onClick= {()=>this.showModalDelete(item)} color="primary" aria-label="IconRefresh">
                           <img src="/images/icon/delete.svg" alt="" />
                         </IconButton>
-                      </Tooltip> */}
+                      </Tooltip>
                     </TableCell>
 
                   </TableRow>
@@ -260,11 +236,11 @@ class ProductCategory extends React.Component {
             </TableFooter>
           </Table>
         </div>
-        {this.state.modalAddUpdate && <ModalAddUpdate data={dataProductsCategory} callbackOff={this.closeModal.bind(this)} />}
-        {this.state.confirmDialog && <ConfirmDialog title="Xác nhận" content={"Bạn có chắc chắn muốn xóa loại tin tức?"} btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
+        {this.state.modalAddUpdate && <ModalAddUpdate data={dataProject} callbackOff={this.closeModal.bind(this)} />}
+        {this.state.confirmDialog && <ConfirmDialog title="Xác nhận" content={"Bạn có chắc chắn muốn xóa dự án?"} btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
         {/* {this.state.modalDetailUser && <ModalDetailUser data={dataNews}  callbackOff={this.closeModal.bind(this)} />} */}
       </div>
     )
   }
 }
-export default ProductCategory
+export default Project

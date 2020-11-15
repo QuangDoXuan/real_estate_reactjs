@@ -22,8 +22,9 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 //data-access
 import axios from 'axios';
+import categoryProvider from '../../../../data-access/product-category-provider'
 
-const resource_url ="https://localhost:44334"
+const resource_url ="http://localhost:3001"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -35,9 +36,8 @@ class ModalAddUpdate extends React.Component {
         this.state = {
             open: true,
             dataproductCategory: this.props.data,
-            productCategoryId:this.props.data && this.props.data.ProductCategoryId ? this.props.data.ProductCategoryId : '',
-            productCategoryName: this.props.data && this.props.data.ProductCategoryName ? this.props.data.ProductCategoryName : '',
-            productCategoryId:this.props.data &&this.props.data.ProductCategoryId?this.props.ProductCategoryId:'',
+            productCategoryId:this.props.data && this.props.data.id ? this.props.data.id : '',
+            productCategoryName: this.props.data && this.props.data.name ? this.props.data.name : '',
             orderNo: this.props.data && this.props.data.OrderNo ? this.props.data.OrderNo : '',
             isActive: this.props.data && this.props.data.IsActive ? this.props.data.IsActive : false,
             createdTime: this.props.data && this.props.data.CreatedTime ? this.props.data.CreatedTime : '',
@@ -45,7 +45,7 @@ class ModalAddUpdate extends React.Component {
             productCategoryTitle:this.props.data&&this.props.data.ProductCategoryTitle?this.props.data.ProductCategoryTitle:'',
             productCategoryDescription:this.props.data&&this.props.data.ProductCategoryDescription?this.props.data.ProductCategoryDescription:'',
             productCategoryKeyword:this.props.data&&this.props.data.ProductCategoryKeyword?this.props.data.ProductCategoryKeyword:'',
-            parentProductCategory:this.props.data&&this.props.data.ParentProductCategoryId?this.props.data.ParentProductCategoryId:'',
+            parentProductCategory:this.props.data&&this.props.data.parent_category_type?this.props.data.parent_category_type:'',
             productCategoryImage: this.props.data&&this.props.data.ProductCategoryImage? this.props.data.ProductCategoryImage:'',
             imageFake:'',
             images:[]
@@ -84,96 +84,124 @@ class ModalAddUpdate extends React.Component {
 
     create = () => {
         // let id = dataNew ? dataNew.NewId : '';
-        let formData = new FormData();
-        if (this.props.data.ProductCategoryId) {
-            console.log(this.props.data.ProductCategoryId)
-            formData.append('ProductCategoryId', this.props.data.ProductCategoryId)
-            formData.append('ProductCategoryName', this.state.productCategoryName)
-            formData.append('OrderNo', this.state.orderNo)
-            formData.append('IsActive',this.state.isActive)
-            formData.append('ProductCategoryTitle',this.state.productCategoryTitle)
-            formData.append('ProductCategoryDescription',this.state.productCategoryDescription)
-            formData.append('ProductCategoryKeyword',this.state.productCategoryKeyword)
-            formData.append('ParentProductCategoryId',this.state.parentProductCategory)
-            formData.append('ProductCategoryImage',this.state.productCategoryImage)
-            axios({
-                url: "https://localhost:44334/api/ProductCategories/update",
-                method: 'PUT',
-                data: formData,
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
-                }
-            })
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Cập nhật thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose();
+        // let formData = new FormData();
+        // if (this.props.data.ProductCategoryId) {
+        //     console.log(this.props.data.ProductCategoryId)
+        //     formData.append('ProductCategoryId', this.props.data.ProductCategoryId)
+        //     formData.append('ProductCategoryName', this.state.productCategoryName)
+        //     formData.append('OrderNo', this.state.orderNo)
+        //     formData.append('IsActive',this.state.isActive)
+        //     formData.append('ProductCategoryTitle',this.state.productCategoryTitle)
+        //     formData.append('ProductCategoryDescription',this.state.productCategoryDescription)
+        //     formData.append('ProductCategoryKeyword',this.state.productCategoryKeyword)
+        //     formData.append('ParentProductCategoryId',this.state.parentProductCategory)
+        //     formData.append('ProductCategoryImage',this.state.productCategoryImage)
+        //     axios({
+        //         url: "https://localhost:44334/api/ProductCategories/update",
+        //         method: 'PUT',
+        //         data: formData,
+        //         headers: {
+        //             Accept: 'application/json',
+        //             'Content-Type': 'multipart/form-data',
+        //             // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+        //         }
+        //     })
+        //         .then(res => {
+        //             console.log(res)
+        //             if (res.data.Code == 200) {
+        //                 toast.success("Cập nhật thành công", {
+        //                     position: toast.POSITION.TOP_RIGHT
+        //                 })
+        //                 this.handleClose();
 
-                    }
-                    else {
-                        toast.error("Cập nhật loại  không thành công!", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose()
-                    }
+        //             }
+        //             else {
+        //                 toast.error("Cập nhật loại  không thành công!", {
+        //                     position: toast.POSITION.TOP_RIGHT
+        //                 })
+        //                 this.handleClose()
+        //             }
+        //         })
+        //         .catch(e => {
+        //             toast.error("Cập nhật không thành công!", {
+        //                 position: toast.POSITION.TOP_RIGHT
+        //             })
+        //             this.handleClose()
+        //         })
+        // }
+        // else {
+        //     formData.append('ProductCategoryId',this.state.productCategoryId)
+        //     formData.append('productCategoryName', this.state.productCategoryName)
+        //     formData.append('OrderNo', this.state.orderNo)
+        //     formData.append('ProductCategoryTitle',this.state.productCategoryTitle)
+        //     formData.append('ProductCategoryDescription',this.state.productCategoryDescription)
+        //     formData.append('ProductCategoryKeyword',this.state.productCategoryKeyword)
+        //     formData.append('ParentProductCategoryId',this.state.parentProductCategory)
+        //     formData.append('ProductCategoryImage',this.state.productCategoryImage)
+        //     axios({
+        //         url: "https://localhost:44334/api/ProductCategories/create",
+        //         method: 'POST',
+        //         data: formData,
+        //         headers: {
+        //             Accept: 'application/json',
+        //             'Content-Type': 'multipart/form-data',
+        //             // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+        //         }
+        //     })
+        //         .then(res => {
+        //             console.log(res)
+        //             if (res.data.Code == 200) {
+        //                 toast.success("Tạo mới loại sản phẩm thành công", {
+        //                     position: toast.POSITION.TOP_RIGHT
+        //                 })
+        //                 this.handleClose();
+        //             }
+        //             else{
+        //                 toast.error("Tạo mới loại sản phẩm không thành công!", {
+        //                     position: toast.POSITION.TOP_RIGHT
+        //                 })
+        //                 this.handleClose()
+        //             }
+        //         })
+        //         .catch(e => {
+        //             toast.error("Tạo mới loại sản phẩm không thành công!", {
+        //                 position: toast.POSITION.TOP_RIGHT
+        //             })
+        //             this.handleClose()
+        //         })
+
+        // }
+
+        let body = {
+            name: this.state.productCategoryName,
+            parent_category_type: this.state.parentProductCategory
+        }
+        if (this.props.data.id) {
+            categoryProvider.update(this.props.data.id ,body).then(res=>{
+                toast.success("Cập nhật loại sản phẩm thành công", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
-                .catch(e => {
-                    toast.error("Cập nhật không thành công!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
-                    this.handleClose()
+                this.handleClose();
+            }).catch(e=>{
+                toast.error("Cập nhật loại sản phẩm không thành công!", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
+                this.handleClose()
+            })
         }
         else {
-            formData.append('ProductCategoryId',this.state.productCategoryId)
-            formData.append('productCategoryName', this.state.productCategoryName)
-            formData.append('OrderNo', this.state.orderNo)
-            formData.append('ProductCategoryTitle',this.state.productCategoryTitle)
-            formData.append('ProductCategoryDescription',this.state.productCategoryDescription)
-            formData.append('ProductCategoryKeyword',this.state.productCategoryKeyword)
-            formData.append('ParentProductCategoryId',this.state.parentProductCategory)
-            formData.append('ProductCategoryImage',this.state.productCategoryImage)
-            axios({
-                url: "https://localhost:44334/api/ProductCategories/create",
-                method: 'POST',
-                data: formData,
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
-                }
+            categoryProvider.createNew(body).then(res=>{
+                toast.success("Tạo mới loại sản phẩm thành công", {
+                    position: toast.POSITION.TOP_RIGHT
+                })
+                this.handleClose();
+            }).catch(e=>{
+                toast.error("Tạo mới loại sản phẩm không thành công!", {
+                    position: toast.POSITION.TOP_RIGHT
+                })
+                this.handleClose()
             })
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Tạo mới loại sản phẩm thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose();
-                    }
-                    else{
-                        toast.error("Tạo mới loại sản phẩm không thành công!", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose()
-                    }
-                })
-                .catch(e => {
-                    toast.error("Tạo mới loại sản phẩm không thành công!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
-                    this.handleClose()
-                })
-
         }
-
-
-
     }
 
     render() {
@@ -190,12 +218,12 @@ class ModalAddUpdate extends React.Component {
             >
                 <ValidatorForm onSubmit={this.create}>
                     {/* <DialogTitle>{content}</DialogTitle> */}
-                    <DialogTitle> {this.props.data && this.props.data.ProductCategoryId ? 'Cập nhật loại sản phẩm ' : 'Thêm mới loại sản phẩm'}</DialogTitle>
+                    <DialogTitle> {this.props.data && this.props.data.id ? 'Cập nhật loại sản phẩm ' : 'Thêm mới loại sản phẩm'}</DialogTitle>
                     <DialogContent>
                         <Grid container>
 
-                        <Grid item xs={12} md={3}>Mã loại sản phẩm(*)</Grid>
-                            <Grid item xs={12} md={9}>
+                        {/* <Grid item xs={12} md={3}>Mã loại sản phẩm(*)</Grid> */}
+                            {/* <Grid item xs={12} md={9}>
                                 {this.props.data&&this.props.data.ProductCategoryId ?
                                 <TextValidator
                                     value={this.state.dataproductCategory.ProductCategoryId}
@@ -217,7 +245,7 @@ class ModalAddUpdate extends React.Component {
                                         this.setState({ productCategoryId: event.target.value });
                                     }}
                                 />}
-                            </Grid>
+                            </Grid> */}
 
 
                             <Grid item xs={12} md={3}>Tên loại sản phẩm(*)</Grid>
@@ -243,26 +271,11 @@ class ModalAddUpdate extends React.Component {
                                 // errorMessages={['Vui lòng chọn trường này']}
                                 onChange={(e)=>this.setState({parentProductCategory:e.target.value})}
                             >
-                                <MenuItem  value={"THUE"}>Thuê</MenuItem>
-                                <MenuItem  value={"BAN"}>Bán</MenuItem>
-                                <MenuItem  value={"DUAN"}>Dự án</MenuItem>
-                                <MenuItem  value={1}>Tổng</MenuItem>
+                                <MenuItem  value={"2"}>Cho thuê</MenuItem>
+                                <MenuItem  value={"1"}>Mua bán</MenuItem>
                             </SelectValidator>
                             </Grid>
-                            <Grid item xs={12} md={3}>Title</Grid>
-                            <Grid item xs={12} md={9}>
-                                <TextValidator
-                                    value={productCategoryTitle}
-                                    placeholder="Nhập title"
-                                    className={classes.textField}
-                                    onChange={(event) => {
-                                        // this.data2.productCategoryName = event.target.value;
-                                        this.setState({ productCategoryTitle: event.target.value });
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} md={3}>Mô tả</Grid>
+                            {/* <Grid item xs={12} md={3}>Mô tả</Grid>
                             <Grid item xs={12} md={9}>
                             <CKEditor
                                     data={productCategoryDescription}
@@ -283,8 +296,8 @@ class ModalAddUpdate extends React.Component {
 
                                 />
                                     
-                            </Grid>
-
+                            </Grid> */}
+{/* 
                             <Grid item xs={12} md={3}>Keyword</Grid>
                             <Grid item xs={12} md={9}>
                                 <TextValidator
@@ -296,9 +309,9 @@ class ModalAddUpdate extends React.Component {
                                         this.setState({ productCategoryKeyword: event.target.value });
                                     }}
                                 />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid item xs={12} md={3}>Hình ảnh(*)</Grid>
+                            {/* <Grid item xs={12} md={3}>Hình ảnh(*)</Grid>
                             <Grid item xs={12} md={9} className={classes.pdr40}>
                                 <input
                                     accept="image/png, image/jpeg"
@@ -321,8 +334,8 @@ class ModalAddUpdate extends React.Component {
                                 
                                 <div className='input-image'>{this.state.productCategoryImage.name}</div>
 
-                            </Grid>
-
+                            </Grid> */}
+{/* 
                             <Grid item xs={12} md={3}>Thứ tự</Grid>
                             <Grid item xs={12} md={9}>
                                 <TextValidator
@@ -334,7 +347,7 @@ class ModalAddUpdate extends React.Component {
                                         this.setState({ orderNo: event.target.value })
                                     }}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                            
                         </Grid>

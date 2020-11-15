@@ -107,6 +107,22 @@ class Home extends Component {
                     }
                 ]
             },
+            {
+                role: [],
+                name: "Công ty",
+                url: '/admin/company',
+                imgUrl: '/images/icon/dashboard.svg',
+                classActiveStyle: 'icon-sidebar ',
+                
+            },
+            {
+                role: [],
+                name: "Dự án",
+                url: '/admin/project',
+                imgUrl: '/images/icon/dashboard.svg',
+                classActiveStyle: 'icon-sidebar ',
+                
+            },
             
         ]
         return allMenus.filter(item => {

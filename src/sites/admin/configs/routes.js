@@ -34,7 +34,14 @@ const ProductCategory = Loadable({
   loader: () => import('../containers/product/index-product-category'),
   loading: Loading,
 })
-
+const Company = Loadable({
+  loader: () => import('../containers/companies/index'),
+  loading: Loading,
+})
+const Project = Loadable({
+  loader: () => import('../containers/projects/index'),
+  loading: Loading,
+})
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/admin/dashboard', name: "Dashboard", component: Dashboard },
@@ -43,6 +50,8 @@ const routes = [
   { path: '/admin/news-category', name: "", component: NewsCategory },
   { path: '/admin/product', name: "", component: Product },
   { path: '/admin/product-category', name: "", component: ProductCategory },
+  { path: '/admin/company', name: "", component: Company },
+  { path: '/admin/project', name: "", component: Project },
 
 ]
 

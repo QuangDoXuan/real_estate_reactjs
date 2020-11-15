@@ -9,10 +9,10 @@ export default {
 
     getByPage(param) {
         let parameters =
-            (param.pagesize ? '?pagesize=' + param.pagesize : '?pagesize=' + 10) +
-            (param.pagenumber ? '&pagenumber=' + param.pagenumber : '&pagenumber=' + - 0)
+            (param.page ? '?page=' + param.page : '?page=' + 1) +
+            (param.per ? '&per=' + param.per : '&per=' + - 10)
         return new Promise((resolve, reject) => {
-            clientUtils.requestApi("get", constants.api.product_category.getByPage + parameters, {}).then(x => {
+            clientUtils.requestApi("get", "/admin/categories/" + parameters, {}).then(x => {
                 resolve(x);
             }).catch(e => {
                 reject(e);
@@ -20,9 +20,12 @@ export default {
         })
     },
 
-    getAll() {
+    getAll(param) {
+        let parameters =
+        (param.page ? '?page=' + param.page : '?page=' + 1) +
+        (param.per ? '&per=' + param.per : '&per=' + - 10)
         return new Promise((resolve, reject) => {
-            clientUtils.requestApi("get", constants.api.product_category.getAll ,{}).then(x => {
+            clientUtils.requestApi("get", "/admin/categories/" + parameters,{}).then(x => {
                 resolve(x);
             }).catch(e => {
                 reject(e);
@@ -32,7 +35,17 @@ export default {
 
     createNew(param){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('post',constants.api.product_category.create,param).then(x=>{
+            clientUtils.requestApi('post','/admin/categories', param).then(x=>{
+                resolve(x)
+            }).catch(e=>{
+                reject(e)
+            })
+        })
+    },
+
+    update(id, param){
+        return new Promise((resolve,reject)=>{
+            clientUtils.requestApi('put','/admin/categories/' + id, param).then(x=>{
                 resolve(x)
             }).catch(e=>{
                 reject(e)
@@ -62,7 +75,7 @@ export default {
     ,
     deleteProductCategory(id){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('delete',constants.api.product_category.delete+"?ProductCategoryId="+id).then(x=>{
+            clientUtils.requestApi('delete',"/admin/categories/"+id).then(x=>{
                 resolve(x)
             }).catch(e=>{
                 reject(e)

@@ -16,18 +16,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 
 //Component
-import ModalAddUpdate from './create-update-product-category'
+import ModalAddUpdate from './create-update-company'
 import ConfirmDialog from '../../components/confirm';
 
 //toast
 import { ToastContainer, toast } from 'react-toastify';
 
-//provider
-import ProductCatprovider from '../../../../data-access/product-category-provider'
-
 import moment from 'moment'
-import productCategoryProvider from '../../../../data-access/product-category-provider';
-class ProductCategory extends React.Component {
+import companyProvider from '../../../../data-access/company-provider';
+class Company extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -38,9 +35,8 @@ class ProductCategory extends React.Component {
       selected: [],
       progress: false,
       modalAddUpdate: false,
-      modalDetailNews: false,
-      listProductsCategory: [],
-      dataProductsCategory: {},
+      listCompanies: [],
+      dataCompany: {},
       tempDelete:[],
       confirmDialog:false,
       name:''
@@ -52,7 +48,7 @@ class ProductCategory extends React.Component {
   }
 
   loadPage() {
-    this.getAllNewCategory()
+    // this.getAllNewCategory()
     this.getByPage()
   }
 
@@ -77,9 +73,9 @@ class ProductCategory extends React.Component {
       page: this.state.page 
     }
     this.setState({progress:true})
-    ProductCatprovider.getAll(param).then(res=>{
+    companyProvider.getAll(param).then(res=>{
       this.setState({
-          listProductsCategory:res,
+          listCompanies:res,
           progress:false
       })
     }).catch(e=>{
@@ -96,11 +92,11 @@ class ProductCategory extends React.Component {
       page: this.state.page 
     }
    
-    ProductCatprovider.getByPage(param).then(res=>{
+    companyProvider.getByPage(param).then(res=>{
       let stt = 1 + (param.page) * param.per;
       console.log(res)
       this.setState({
-        listProductsCategory:res,
+        listCompanies:res,
         stt,
         total:res.length,
         // totalPerPage:res.Data.TotalNumberOfRecords
@@ -112,7 +108,7 @@ class ProductCategory extends React.Component {
 
   closeModal() {
     this.loadPage();
-    this.setState({ modalAddUpdate: false, modalDetailUser: false, dataProductsCategory:{} });
+    this.setState({ modalAddUpdate: false, modalDetailUser: false, dataCompany:{} });
   }
 
   modalAddUpdate = () => {
@@ -124,35 +120,27 @@ class ProductCategory extends React.Component {
     
     this.setState({
       modalAddUpdate: true,
-      dataProductsCategory: data
+      dataCompany: data
     })
   }
 
   modalDetail = (data) => {
     this.setState({
       modalDetailUser: true,
-      dataProductsCategory: data
+      dataCompany: data
     })
   }
 
-  delete=(type)=>{
+  delete = (type)=>{
     this.setState({ confirmDialog: false })
     if(type==1){
-      ProductCatprovider.deleteProductCategory(this.state.tempDelete.ProductCategoryId).then(res=>{
-        if(res.Code == 200){
-          toast.success("Xóa thành công",{
+      companyProvider.delete(this.state.tempDelete.id).then(res=>{
+        toast.success("Xóa thành công",{
             position:toast.POSITION.TOP_RIGHT
-          })
-          this.loadPage()
-        }
-        else{
-          toast.error("Xóa thất bại",{
-            position:toast.POSITION.TOP_RIGHT
-          })
-        }
+        })
+        this.loadPage()
       })
     }
-
   }
 
   searchByName(e){
@@ -161,10 +149,10 @@ class ProductCategory extends React.Component {
     }
     else{
       this.setState({progress:true})
-      productCategoryProvider.searchByName(e.target.value).then(res=>{
+      companyProvider.searchByName(e.target.value).then(res=>{
         if(res.Code==200){
           this.setState({
-            listProductsCategory:res.Data
+            listCompanies:res.Data
           })
         }
         this.setState({progress:false})
@@ -183,12 +171,12 @@ class ProductCategory extends React.Component {
 }
 
   render() {
-    const { page, size, total, progress, listProductsCategory, dataProductsCategory,stt,confirmDialog } = this.state
+    const { page, size, total, progress, listCompanies, dataCompany,stt,confirmDialog } = this.state
     return (
       <div>
         <div className="head-page-admin">
           <div className="title-page-admin">
-            <h5 className="title-manage-admin">Danh mục sản phẩm</h5>
+            <h5 className="title-manage-admin">Quản lý công ty</h5>
           </div>
           <div className="toolbar-admin">
             <TextField
@@ -209,8 +197,8 @@ class ProductCategory extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tên loại sản phẩm</TableCell>
-                <TableCell>Loại</TableCell>
+                <TableCell>Tên công ty</TableCell>
+                <TableCell>Hình ảnh</TableCell>
                 <TableCell>Ngày tạo</TableCell>
                 {/* <TableCell>Ngày cập nhật</TableCell> */}
                 <TableCell>Thao tác</TableCell>
@@ -218,13 +206,13 @@ class ProductCategory extends React.Component {
             </TableHead>
             <TableBody>
 
-              {listProductsCategory.length > 0 && listProductsCategory.map((item, index) => {
+              {listCompanies.length > 0 && listCompanies.map((item, index) => {
                 return (
                   <TableRow key={index}>
               <TableCell>{index+stt}</TableCell>
               <TableCell onClick={(item) => this.modalDetail(item)}>{item.name}</TableCell>
                 {/* <TableCell onClick={(item) => this.modalDetail(item)}>{item.ProductCategoryTitle}</TableCell> */}
-                <TableCell onClick={(item) => this.modalDetail(item)}>{item.parent_category_type == 1 ? 'Mua bán': 'Cho thuê'}</TableCell>
+                <TableCell onClick={(item) => this.modalDetail(item)}><img style={{width: 150, height: 150, objectFit: 'cover'}} src={item.image}/></TableCell>
                 <TableCell onClick={(item) => this.modalDetail(item)}>{moment(item.created_at).format("DD-MM-YYYY")}</TableCell>
                 {/* <TableCell onClick={(item) => this.modalDetail(item)}>{moment(item.UpdateDtime).format("DD-MM-YYYY")}</TableCell> */}
                     <TableCell className="icon-sidebar">
@@ -233,11 +221,11 @@ class ProductCategory extends React.Component {
                           <img src="/images/icon/edit.svg" alt="" />
                         </IconButton>
                       </Tooltip>
-                      {/* <Tooltip title="Xóa">
+                      <Tooltip title="Xóa">
                         <IconButton onClick= {()=>this.showModalDelete(item)} color="primary" aria-label="IconRefresh">
                           <img src="/images/icon/delete.svg" alt="" />
                         </IconButton>
-                      </Tooltip> */}
+                      </Tooltip>
                     </TableCell>
 
                   </TableRow>
@@ -260,11 +248,11 @@ class ProductCategory extends React.Component {
             </TableFooter>
           </Table>
         </div>
-        {this.state.modalAddUpdate && <ModalAddUpdate data={dataProductsCategory} callbackOff={this.closeModal.bind(this)} />}
-        {this.state.confirmDialog && <ConfirmDialog title="Xác nhận" content={"Bạn có chắc chắn muốn xóa loại tin tức?"} btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
+        {this.state.modalAddUpdate && <ModalAddUpdate data={dataCompany} callbackOff={this.closeModal.bind(this)} />}
+        {this.state.confirmDialog && <ConfirmDialog title="Xác nhận" content={"Bạn có chắc chắn muốn xóa công ty?"} btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
         {/* {this.state.modalDetailUser && <ModalDetailUser data={dataNews}  callbackOff={this.closeModal.bind(this)} />} */}
       </div>
     )
   }
 }
-export default ProductCategory
+export default Company

@@ -19,8 +19,6 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
-//Component
-
 //data-access
 import imageProvider from '../../../../data-access/image-provider'
 import cateProvider from '../../../../data-access/category-provider'
@@ -326,7 +324,7 @@ class ModalAddUpdate extends React.Component {
 
                             <Grid item xs={12} md={2}>Mô tả</Grid>
                             <Grid item xs={12} md={4} className={classes.pdr40}>
-                                <TextField
+                                {/* <TextField
                                     value={ProductSummary}
                                     multiline
                                     placeholder="Nhập mô tả"
@@ -335,6 +333,24 @@ class ModalAddUpdate extends React.Component {
                                         this.data2.ProductSummary = event.target.value;
                                         this.setState({ ProductSummary: event.target.value })}
                                     }
+                                /> */}
+                                <CKEditor
+                                    data={ProductSummary}
+                                    editor={ClassicEditor}
+
+                                    config={{ckfinder: {
+                                        // Upload the images to the server using the CKFinder QuickUpload command.
+                                        // uploadUrl: 'https://44400.cke-cs.com/easyimage/upload/'
+                                        uploadUrl: 'https://localhost:44334/Uploads/'
+                                      }}}
+
+                                    onChange={(event, editor) => {
+                                        const data = editor.getData();
+                                        console.log({ event, editor, data });
+                                        this.data2.ProductSummary = data;
+                                        this.setState({ ProductSummary: data })
+                                    }}
+
                                 />
                             </Grid>
 

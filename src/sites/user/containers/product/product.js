@@ -51,7 +51,11 @@ class Product extends React.Component {
                     
                     <CardText>{this.props.ProductSummary}</CardText>
                     <div style={{ textAlign: 'right' }}>
-                        <Link to={{ pathname: '/tin-dang/', state: { product: this.props.data }, }} className='read-more'>Xem thêm</Link>
+                        {/* <form id="form_detail">
+                            <button type="submit"> */}
+                                <Link to={{ pathname: '/tin-dang/', state: { product: this.props.data }, }} className='read-more'>Xem thêm</Link>
+                            {/* </button>
+                        </form> */}
                     </div>
                 </CardBody>
             </Card>
