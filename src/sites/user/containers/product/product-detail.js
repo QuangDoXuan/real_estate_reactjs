@@ -7,6 +7,7 @@ import 'react-image-lightbox/style.css'
 import productProvider from '../../../../data-access/product-provider'
 import productCategoryProvider from '../../../../data-access/product-category-provider'
 import SlideClosed from '../../containers/home/product'
+import { BrowserRouter, Router, NavLink, Link } from "react-router-dom";
 
 const resource_url = "https://localhost:44334"
 class ProductDetail extends React.Component {
@@ -25,7 +26,6 @@ class ProductDetail extends React.Component {
     }
 
     componentDidMount() {
-        this.myRef.current.scrollTo(0, 0);
         this.getAll()
         this.getCategoryById()
         this.getProductImagesById()
@@ -70,7 +70,7 @@ class ProductDetail extends React.Component {
         const { classes } = this.props
 
         return (
-            <div ref={this.myRef} className={classes.homeContent + " " + "content"}>
+            <div className={classes.homeContent + " " + "content"}>
                 <div className="row app-bar-breadcumb">
                     <div className="container">
                         <ul className="col-md-3">
@@ -137,7 +137,7 @@ class ProductDetail extends React.Component {
                             <div className=" product-summary product-dacdiem">
                                 <p className="title-dacdiem">Đặc điểm</p>
                                 <div className="summary-detail dacdiem-sum">
-                                    {this.state.project && this.state.project.name ? (<p className="one-row-detail"><label className="span-dacdiem">Dự án:</label>{this.state.project.name}</p>) :''}
+                                    {this.state.project && this.state.project.name ? (<p className="one-row-detail"><label className="span-dacdiem">Dự án:</label><Link to={{ pathname: '/du-an/chi-tiet-du-an/' + this.state.project.name, state: { product: this.state.project }, }}  title={this.state.project.name}>{this.state.project.name}</Link></p>) :''}
                                     <p className="one-row-detail"><label className="span-dacdiem">Loại tin rao:</label>{this.state.productCategory.name}</p>
                                     <p className="one-row-detail"><label className="span-dacdiem">Giá:</label>{this.props.location.state.product.price01}</p>
                                     <p className="one-row-detail"><label className="span-dacdiem">Diện tích:</label> {this.props.location.state.product.area}</p>

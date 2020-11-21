@@ -5,12 +5,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ProjectItem from './Project'
 import productCategoryProvider from '../../../../data-access/product-category-provider'
+import projectProvider from '../../../../data-access/project-provider'
+import Pagination from "react-js-pagination";
 
 class Project extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            listProject:[]
+            listProject:[],
+            page: 1,
+            per: 21
         }
     }
 
@@ -19,20 +23,22 @@ class Project extends React.Component{
     }
 
     loadAllProject(){
-        productCategoryProvider.getAll().then(res=>{
-            if(res&&res.Code&&res.Code==200){
-                this.setState({
-                    listProject: res.Data.filter(x=>x.ParentProductCategoryId=="DUAN")
-                })
-            }
+        projectProvider.getByPaging({page: this.state.page, per: this.state.per}).then(res=>{
+            this.setState({
+                listProject: res
+            })
         }).catch(e=>{
             console.log(e)
         })
     }
 
+    handlePageChange(pageNumber) {
+        this.setState({page: pageNumber},()=>this.loadAllProject());
+        window.scrollTo(0, 0)
+    }
+
     render(){
         const {classes}=this.props
-        console.log(this.state.listProject)
         return(
             <div className={classes.homeContent}>
                  <div style={{marginBottom:0}} className="row app-bar-breadcumb">
@@ -62,16 +68,6 @@ class Project extends React.Component{
                 <div style={{marginTop:32}} className="list-project">
                     <div className="container">
                         <div className="row">
-                            {/* {
-                                [1,2,3,4,5,6,7,8,9,10].map((item,index)=>{
-                                    return(
-                                        <ProjectItem key={index}
-                                        data= {item}
-                                    />
-                                    )
-                                   
-                                })
-                            } */}
                             {this.state.listProject.map((item,index)=>{
                                 return(
                                     <ProjectItem key={index}
@@ -80,6 +76,13 @@ class Project extends React.Component{
                                 )
                             })}
                         </div>
+                        <Pagination
+                            activePage={this.state.page}
+                            itemsCountPerPage={20}
+                            totalItemsCount={450}
+                            pageRangeDisplayed={5}
+                            onChange={this.handlePageChange.bind(this)}
+                        />
                     </div>
                 </div>
             </div>

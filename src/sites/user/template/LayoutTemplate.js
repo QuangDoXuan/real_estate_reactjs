@@ -57,9 +57,16 @@ const routes = [
         })
     },
 
+    {
+        path: '/cho-thue-nha-dat',
+        component: Loadable({
+            loader: () => import('./../containers/product/all-hire-product'),
+            loading: Loading,
+        })
+    },
 
     {
-        path: '/san-pham',
+        path: '/nha-dat-ban',
         component: Loadable({
             loader: () => import('./../containers/product/all-product'),
             loading: Loading,

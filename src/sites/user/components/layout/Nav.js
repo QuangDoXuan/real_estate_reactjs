@@ -139,11 +139,11 @@ class Header extends React.Component {
                 <div className="header h-second fixed">
                     <div className="container header-second-content">
                         <ul className="menu-list-content d-flex">
-                            <li className="item-content"><a>Mua bán</a></li>
-                            <li className="item-content"><a>Cho thuê</a></li>
-                            <li className="item-content"><a>Dự án</a></li>
-                            <li className="item-content"><a>So sánh</a></li>
-                            <li className="item-content"><a>Tin tức</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}} href="/nha-dat-ban">Mua bán</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}} href="/cho-thue-nha-dat">Cho thuê</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}} href="/du-an">Dự án</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}}>So sánh</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}}>Tin tức</a></li>
                         </ul>
                     </div>  
                 </div>

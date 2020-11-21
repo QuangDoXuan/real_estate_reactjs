@@ -5,10 +5,12 @@ import moment from 'moment'
 
 import OwlCarousel from 'react-owl-carousel2';
 import 'react-owl-carousel2/lib/styles.css';
-import productCategory from '../../../../data-access/product-category-provider'
+import projectProvider from '../../../../data-access/project-provider'
 import productProvider from '../../../../data-access/product-provider'
+import companyProvider from '../../../../data-access/company-provider'
 import Project from '../project/project-hot'
 import Product from '../product/product'
+import Lightbox from 'react-image-lightbox';
 
 const resource_url = "https://localhost:44334"
 class ProjectDetail extends React.Component {
@@ -16,50 +18,49 @@ class ProjectDetail extends React.Component {
         super(props)
         this.state = {
             hotProject: [],
-            childrenProduct: []
+            childrenProduct: [],
+            page: 1,
+            per: 20,
+            isOpen: false,
+            listImage: [],
+            photoIndex: 0,
+            company: {}
         }
     }
-
-
-    // componentWillReceiveProps(nextProps) {
-    //     if (nextProps.location.state!== {}) {
-    //         // do stuffs
-    //         window.location.reload()
-    //         // window.scrollTo(0)
-    //     }
-    // }
-
     componentDidMount() {
-        this.loadPage()
-    }
-
-    loadPage() {
-        this.loadProduct();
-        this.loadProductCategory();
+        this.loadProduct()
+        this.loadRelatedProject()
+        this.getProjectImagesById()
     }
 
     loadProduct() {
-        let param = {
-            ParentProductCategoryId: "DUAN"
-        }
-        productProvider.search(param).then(res => {
-            if (res.Code == 200) {
-                this.setState({
-                    childrenProduct: res.Data
-                })
-            }
+        projectProvider.getAllProduct(this.props.location.state.product.id, {page: this.state.page, per: this.state.per}).then(res => {
+            console.log(res)
+            this.setState({
+                childrenProduct: res
+            })
         }).catch(e => {
             console.log(e)
         })
     }
 
-    loadProductCategory() {
-        productCategory.getAll().then(res => {
-            if (res.Code == 200) {
-                this.setState({
-                    hotProject: res.Data.filter(item => item.ParentProductCategoryId == "DUAN")
-                })
-            }
+    loadRelatedProject() {
+        companyProvider.getAllProject(this.props.location.state.product.company_id).then(res => {
+            console.log(res)
+            this.setState({
+                hotProject: res
+            })
+        })
+    }
+
+    getProjectImagesById() {
+        projectProvider.show(this.props.location.state.product.id).then(res => {
+            this.setState({
+                listImage: res.project_images.map(x=>x.name),
+                company: res.company
+            })
+        }).catch(e => {
+            console.log(e)
         })
     }
 
@@ -73,6 +74,20 @@ class ProjectDetail extends React.Component {
             dots: true,
             items: 1,
         };
+        const options2 = {
+            items: 4,
+            nav: true,
+            rewind: true,
+            autoplay: true,
+            navText: [],
+            margin: 4,
+        };
+         
+        const events = {
+            onDragged: function(event) {},
+            onChanged: function(event) {}
+        };
+        const { photoIndex, isOpen, listImage } = this.state
         return (
             <div className={classes.homeContent + " " + "content"}>
                 <div className={"row app-bar-breadcumb " + classes.mgbt}>
@@ -85,30 +100,49 @@ class ProjectDetail extends React.Component {
                     </div>
 
                 </div>
-                <div className={classes.headerNewsDetail}>
-                    <div className="container">
-                        <div className="fll">
-                            <span className={classes.circle + " " + "txt-center fll font20 mgr10 mgt25 mgbt35"}>
-                                <i className="far fa-bookmark"></i>
-                            </span>
-                            <b className="fll font20 title-category"><a title="Cẩm nang" className="ng-binding">Dự án</a></b>
-                        </div>
-                        <div className="flr">
-                            {/* ngRepeat: catc in ndc.listCategories|filter:{parent: aliasCategoryParent} track by $index */}
-                        </div>
-                        <p className="clearboth" />
-                    </div>
-                </div>
-
                 <div className="container news-detail-container">
+
+                    <div style={{marginBottom: 80, marginTop: 15}} class="row">
+                        <div className="col-md-7" style={{position:'relative'}}>
+                            <div onClick={() => this.setState({ isOpen: true })} className="opa08 color-white height32 span-common">Xem {this.state.listImage.length} ảnh</div>
+                            <img className={classes.img} src={this.props.location.state.product.image} />
+                        </div>
+                        <div className="col-md-5">
+                            <h2 className="font-22 txt-color-black3">{this.props.location.state.product.name}</h2>
+                            <div className="area-thoathuan">
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Địa chỉ: {this.props.location.state.product.address}</span>
+                                </div>
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Diện tích: {this.props.location.state.product.total_area}</span>
+                                </div>
+
+                                <div className="row-thoathuan">
+                                    <div style={{fontSize: 14}} >Chủ đầu tư: </div>
+                                    <img className="company-logo" src={this.state.company && this.state.company.image ? this.state.company.image: ''}></img>
+                                    <span style={{fontSize: 14}} className="txt-color-black3">{this.state.company && this.state.company.name ? this.state.company.name:'' }</span>
+                                </div>
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Khoảng giá: {this.props.location.state.product.price_range}</span>
+                                </div>
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Giá/m2: {this.props.location.state.product.pricem2}</span>
+                                </div>
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Trạng thái: {this.props.location.state.product.build_status}</span>
+                                </div>
+                                <div className="row-thoathuan">
+                                    <span style={{fontSize: 14}} className="txt-color-black3">Thời gian hoàn thành: {this.props.location.state.product.release_at}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="row">
                         <div className="col-md-7 content-project">
                             <h2 style={{ fontSize: 26, fontWeight: 'bold', color: "#283c5a" }}>{this.props.location.state.product.ProductCategoryName}</h2>
-                            <p class="user-date mgbt10"><i class="fal fa-clock mgr5" aria-hidden="true"></i>{moment(this.props.location.state.product.CreateDtime).format("DD-MM-YYYY")}</p>
-
-
-                            <span className={classes.span}>{this.props.location.state.product.ProductCategoryTitle}</span>
-                            <div style={{ marginTop: 32 }} dangerouslySetInnerHTML={{ __html: this.props.location.state.product.ProductCategoryDescription }} className="content-news">
+                            <span className={classes.span}>{this.props.location.state.product.name}</span>
+                            <div style={{ marginTop: 32 }} dangerouslySetInnerHTML={{ __html: this.props.location.state.product.description }} className="content-news">
 
                             </div>
                         </div>
@@ -117,11 +151,11 @@ class ProjectDetail extends React.Component {
 
                         <div style={{ height: '100%', paddingBottom: 22 }} className="col-xs-12 col-md-4 tin-noibat">
                             <div className="title-tinnoibat">
-                                <h4>Các dự án khác</h4>
+                                <h4>Các dự án liên quan</h4>
                             </div>
                             <div className="list-tin-noi-bat project-hot">
                                 <OwlCarousel ref="slide" options={options}>
-                                    {this.state.hotProject.slice(0,5).map((item, index) => {
+                                    {this.state.hotProject.map((item, index) => {
                                         return (
                                             <Project
                                                 key={index}
@@ -138,27 +172,46 @@ class ProjectDetail extends React.Component {
                 </div>
 
                 <div className="container project-products">
-                    <h5 className="project-related">Các sản phẩm thuộc {this.props.location.state.product.ProductCategoryName}</h5>
+                    <h5 className="project-related">Các sản phẩm thuộc {this.props.location.state.product.name}</h5>
                     <div className="row">
-                                {this.state.childrenProduct.map((item, index) => {
-                                    return(
-                                        <div className="col-xs-12 col-md-3 one-project-product">
-                                        <Product
+                        <OwlCarousel ref="product" options={options2} events={events} >
+                            {this.state.childrenProduct.length > 0 && this.state.childrenProduct.map((item, index)=>{
+                                return(
+                                    <div key={index}>
+                                    <Product
                                         key={index}
-                                        ProductThumbnail={item.ProductThumbnail}
-                                        ProductPrice={item.ProductPrice}
-                                        ProductName={item.ProductName}
-                                        ProductSummary={item.ProductSummary}
-                                        ProductCreateDTime={item.ProductCreateDTime}
+                                        ProductThumbnail={item.remote_thumbnail}
+                                        ProductPrice={item.price01}
+                                        ProductName= {item.name}
+                                        ProductSummary={item.short_description}
+                                        ProductCreateDTime={item.created_at}
                                         data={item}
                                     />
                                     </div>
-                                    )
-                                   
-                                })}
+                                )
+                            })}
+                        </OwlCarousel>
                     </div>
                 </div>
 
+                {isOpen && (
+                    <Lightbox
+                        mainSrc={listImage[photoIndex]}
+                        nextSrc={listImage[(photoIndex + 1) % listImage.length]}
+                        prevSrc={listImage[(photoIndex + listImage.length - 1) % listImage.length]}
+                        onCloseRequest={() => this.setState({ isOpen: false})}
+                        onMovePrevRequest={() =>
+                            this.setState({
+                                photoIndex: (photoIndex + listImage.length - 1) % listImage.length,
+                            })
+                        }
+                        onMoveNextRequest={() =>
+                            this.setState({
+                                photoIndex: (photoIndex + 1) % listImage.length,
+                            })
+                        }
+                    />
+                )}
             </div>
         )
     }

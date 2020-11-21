@@ -11,7 +11,7 @@ import priceHireProvider from '../../../../data-access/pricehire-provider'
 import categoryProvider from '../../../../data-access/category-provider';
 import Pagination from "react-js-pagination";
 // require("bootstrap/less/bootstrap.less");
-class AllProduct extends React.Component {
+class AllHireProduct extends React.Component {
   constructor(props){
     super(props)
     this.state = {
@@ -39,7 +39,7 @@ class AllProduct extends React.Component {
   }
 
   getListSell(){
-    productProvider.search({type: 1, page: this.state.page, per: this.state.size}).then(res=>{
+    productProvider.search({type: 2, page: this.state.page, per: this.state.size}).then(res=>{
       console.log(res)
       this.setState({
         listSell: res
@@ -50,7 +50,7 @@ class AllProduct extends React.Component {
   }
 
   getListCategories(){
-    categoryProvider.getByParent(1).then(res=>{
+    categoryProvider.getByParent(2).then(res=>{
       console.log(res)
       this.setState({
         listCategories: res
@@ -102,7 +102,7 @@ class AllProduct extends React.Component {
       areaStart: this.state.fromArea,
       areaEnd: this.state.toArea,
       address: this.state.address,
-      parentCategory: 1
+      parentCategory: 2
     }
     productProvider.filter(body).then(res=>{
       this.setState({
@@ -154,7 +154,7 @@ class AllProduct extends React.Component {
               <div onClick={()=> this.setState({openSelectPrice: !this.state.openSelectPrice})} className="box-selected selected-price">{this.state.price == '' ? 'Khoảng giá': this.state.price}</div>
               {this.state.openSelectPrice ? 
                 <ul className="list-parent-cateogry">
-                  {priceSoldProvider.map((item, index) => {
+                  {priceHireProvider.map((item, index) => {
                     return(
                       <li onClick={()=> this.onSelectPrice(item)} className="item-select-search"><a>{item.title}</a></li>
                     )
@@ -243,8 +243,8 @@ const styles = theme => ({
   }
 });
 
-AllProduct.propTypes = {
+AllHireProduct.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AllProduct);
+export default withStyles(styles)(AllHireProduct);

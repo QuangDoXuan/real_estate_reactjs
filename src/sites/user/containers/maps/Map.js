@@ -48,11 +48,12 @@ class Map extends React.Component {
     }
 
     onRectangleComplete = (rectangle) => {
+        console.log(rectangle)
         let location = {
             south: rectangle.getBounds().Sa.i,
             north: rectangle.getBounds().Sa.j,
-            west: rectangle.getBounds().Ya.i,
-            east: rectangle.getBounds().Ya.j
+            west: rectangle.getBounds().Wa.i,
+            east: rectangle.getBounds().Wa.j
         }
         this.setState({
             drawMode: null

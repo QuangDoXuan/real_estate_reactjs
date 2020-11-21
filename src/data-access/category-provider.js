@@ -27,6 +27,16 @@ export default {
         });
     },
 
+    getByParent(id){
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi('get', '/category/getbyparent/' + id, {}).then(x=>{
+                resolve(x)
+            }).catch(e=>{
+                reject(e)
+            })
+        })
+    },
+
     getByPage(param) {
         let parameters =
             (param.type ? '?type=' + param.type : '?type=' + 0) +

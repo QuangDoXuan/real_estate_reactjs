@@ -42,6 +42,20 @@ export default {
         })
     },
 
+    search(param) {
+        let parameters =
+            (param.type ? '?type=' + param.type : '?type=' + 0) +
+            (param.page ? '&page=' + param.page : '&page=' + 1) +
+            (param.per ? '&per=' + param.per : '&per=' + - 20)
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi("get", '/products' + parameters, {}).then(x => {
+                resolve(x);
+            }).catch(e => {
+                reject(e);
+            })
+        })
+    },
+
     searchByLocation(param) {
         let parameters = `?south=${param.south || null}&north=${param.north || null}&west=${param.west||null }&east=${param.east || null}`
         return new Promise((resolve,reject)=>{
@@ -53,18 +67,21 @@ export default {
         })
     },
 
-    search(param){
+    filter(param){
         let parameters =
-        (param.ProductCategoryId?'?ProductCategoryId='+param.ProductCategoryId:'?ProductCategoryId='+'')+
-         (param.ProductPriceStart?'&ProductPriceStart='+param.ProductPriceStart:'&ProductPriceStart='+0)+
-         (param.ProductPriceEnd?'&ProductPriceEnd='+param.ProductPriceEnd:'&ProductPriceEnd='+0)+
-         (param.ProductAreaStart?'&ProductAreaStart='+param.ProductAreaStart:'&ProductAreaStart='+0)+
-         (param.ProductAreaEnd?'&ProductAreaEnd='+param.ProductAreaEnd:'&ProductAreaEnd='+0)+
-         (param.ProductAddress?'&ProductAddress='+param.ProductAddress:'&ProductAddress='+'')+
-         (param.ParentProductCategoryId?'&ParentProductCategoryId='+param.ParentProductCategoryId:'&ParentProductCategoryId='+'')
+
+        (param.categoryId?'?categoryId='+param.categoryId:'?categoryId='+'')+
+        (param.page ? '&page=' + param.page : '&page=' + 1) +
+        (param.per ? '&per=' + param.per : '&per=' + 20)+
+         (param.priceStart?'&from_price='+param.priceStart:'&from_price='+0)+
+         (param.priceEnd?'&to_price='+param.priceEnd:'&to_price='+0)+
+         (param.areaStart?'&from_area='+param.areaStart:'&from_area='+0)+
+         (param.areaEnd?'&to_area='+param.areaEnd:'&to_area='+0)+
+         (param.address?'&address='+param.address:'&address='+'')+
+         (param.parentCategory?'&parent_category='+param.parentCategory:'&parent_category='+'')
 
          return new Promise((resolve,reject)=>{
-             clientUtils.requestApi('get',constants.api.product.search+parameters,{}).then(x=>{
+             clientUtils.requestApi('get','/filter'+parameters,{}).then(x=>{
                  resolve(x)
              }).catch(e=>{
                  reject(e)

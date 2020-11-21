@@ -98,5 +98,14 @@ export default {
                 reject(e)
             })
         })
+    },
+    getAllProject(id){
+        return new Promise((resolve,reject)=>{
+            clientUtils.requestApi('get',"/getbycompany/" + id).then(x=>{
+                resolve(x)
+            }).catch(e=>{
+                reject(e)
+            })
+        })
     }
 }

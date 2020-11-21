@@ -858,3 +858,126 @@ span.info-finish.info-icon.ver-box-detail {
   /* color: #1a5d05; */
   padding-top: 8px;
 }
+.search-bar {
+  padding: 10px 0;
+  width: 100%;
+  float: left;
+  background-color: #fff;
+  box-shadow: 0 3px 5px 0 rgba(0,0,0,.1);
+}
+.select-item {
+  margin-right: 10px;
+  position: relative;
+}
+.select-item ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.box-selected {
+  border: 1px solid #ccc;
+  padding: 8px 48px;
+  border-radius: 3px;
+  font-size: 15px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+ul.list-parent-cateogry {
+  /* display: none; */
+  cursor: pointer;
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  width: 100%;
+  border-radius: 3px;
+  top: 49px;
+  text-align: left;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  z-index: 9;
+  margin-right: 0;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 8px 16px 0 rgba(0,0,0,.2);
+  -moz-box-shadow: 0 8px 16px 0 rgba(0,0,0,.2);
+  height: 300px;
+  overflow-y: auto;
+}
+li.item-select-search a {
+  font-size: 14px;
+  color: #27406d;
+  padding: 12px;
+  display: inline-block;
+  border-bottom: 1px solid #ebebeb;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+}
+ul.list-parent-cateogry:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-bottom-color: #fff;
+  border-top: 0;
+  margin-left: -5px;
+  margin-top: -5px;
+  z-index: 1;
+}
+.pj-item .description#readmore {
+  padding: 0px;
+  height: 40px;
+  overflow: hidden;
+  padding: 0!important;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+a.product-name {
+  font-size: 20px;
+  color: #eb5155;
+}
+.sorted-bar select {
+  float: right;
+  margin: 8px 0px;
+  padding: 8px;
+  border-radius: 3px;
+}
+.container.content-sell {
+  margin-top: 90px;
+}
+
+ul.pagination li a {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 8px;
+}
+ul.pagination li a:hover {
+  text-decoration: none;
+  background: #3d4d65;
+  color: #fff;
+}
+ul.pagination li {
+  padding: 8px 4px;
+}
+ul.pagination {
+  display: flex;
+  justify-content: center;
+}
+.box-comment {
+  display: none;
+}
+.company-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 80px;
+  object-fit: cover;
+  margin-right: 15px;
+}
