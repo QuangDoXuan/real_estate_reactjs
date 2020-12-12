@@ -10,17 +10,17 @@ class Project extends React.Component {
         return (
             <div className="pj-item d-flex border-radius-5px color-red">
                 <div className="image-thumb">
-                    <a href="/bao-loc-park-hills-pj27336200" title="Bảo Lộc Park Hills">
+                    <Link to={{ pathname: '/du-an/chi-tiet-du-an/' + this.props.data.name, state: { product: this.props.data }, }}  title={this.props.data.name}>
                         <img className="lazy avatar" src={this.props.image} alt="Bảo Lộc Park Hills" style={{}} />
                         <div className="bg-opacity dangban">
                             <span className="status-bg">{this.props.status}</span>
                             <span className="status-icon" />
                         </div>
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="right-side">
-                    <Link to={this.props.slug} className="project-name">
+                    <Link to={{ pathname: '/du-an/chi-tiet-du-an/' + this.props.data.name, state: { product: this.props.data }, }}  title={this.props.data.name} className="project-name">
                         {this.props.title}
                     </Link>
                     <div className="ver-box-address info-address border-bottom">{this.props.address}</div>

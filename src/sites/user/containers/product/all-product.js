@@ -181,7 +181,7 @@ class AllProduct extends React.Component {
           <div className="row">
               <h3 style={{padding: '0 15px', fontSize: 20}} className="title-sell">Bất động sản Hà Nội - Mua bán nhà đất tại Hà Nội 2020</h3>
           </div>
-          <div className="row row-sort">
+          {/* <div className="row row-sort">
             <div className="col-md-8 sorted-bar">
                 <select>
                   <option value="NEWEAST">Mới nhất</option>
@@ -189,7 +189,7 @@ class AllProduct extends React.Component {
                   <option value="CHEAPEST">Giá thấp nhất</option>
                 </select>
             </div>
-          </div>
+          </div> */}
           <div className="row">
             <div className="col-md-8 list-sell">
               {this.state.listSell && this.state.listSell.length > 0 ? this.state.listSell.map((item, index) => {

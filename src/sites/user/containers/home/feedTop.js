@@ -3,6 +3,7 @@ import projectProvider from '../../../../data-access/project-provider'
 import Project from './project'
 import OwlCarousel from 'react-owl-carousel2';
 import 'react-owl-carousel2/lib/styles.css';
+import { ListGroupItem } from 'reactstrap';
 
 class CardTop extends React.Component {
     constructor(props) {
@@ -56,6 +57,7 @@ class CardTop extends React.Component {
                                                 company={item.company_name}
                                                 image={item.image}
                                                 companySlug={item.company_slug}
+                                                data={item}
                                         />
                                     )
 

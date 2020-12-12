@@ -20,13 +20,13 @@ const routes = [
     //         loading:Loading,
     //     })
     // },
-    // {
-    //     path: '/lich-dat-kham/:id',
-    //     component: Loadable({
-    //         loader: () => import('./../../user/containners/medical-record/MedicalExam'),
-    //         loading: Loading,
-    //     })
-    // },
+    {
+        path: '/so-sanh-du-an',
+        component: Loadable({
+            loader: () => import('../containers/compare/Compare'),
+            loading: Loading,
+        })
+    },
     {
         path: '/maps',
         component: Loadable({

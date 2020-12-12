@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import productCategoryProvider from '../../../../data-access/product-category-provider'
 import abcProvider from '../../../../data-access/abc-provider'
 import MenuItem from '../../containers/home/MenuLevel1'
+// import Logo from '../../../../../public/images/land.png'
 // import axios from 'axios'
 class Header extends React.Component {
     constructor(props) {
@@ -104,7 +105,9 @@ class Header extends React.Component {
                                     <div className="bar2" />
                                     <div className="bar3" />
                                 </div>
-                                <h1><a className="logo" href="/" title="Cổng thông tin số 1 về Dự án Bất động sản - Homedy.com" /></h1>
+                                <h1><a className="logo" href="/" title="Cổng thông tin số 1 về Dự án Bất động sản - Homedy.com">
+                                    </a>                                
+                                </h1>
                             </div>
                             <div className="center box-menu-bar">
                                 <div className="box-search">
@@ -142,8 +145,8 @@ class Header extends React.Component {
                             <li className="item-content"><a style={{textDecoration: 'none'}} href="/nha-dat-ban">Mua bán</a></li>
                             <li className="item-content"><a style={{textDecoration: 'none'}} href="/cho-thue-nha-dat">Cho thuê</a></li>
                             <li className="item-content"><a style={{textDecoration: 'none'}} href="/du-an">Dự án</a></li>
-                            <li className="item-content"><a style={{textDecoration: 'none'}}>So sánh</a></li>
-                            <li className="item-content"><a style={{textDecoration: 'none'}}>Tin tức</a></li>
+                            <li className="item-content"><a style={{textDecoration: 'none'}} href="/so-sanh-du-an">So sánh</a></li>
+                            {/* <li className="item-content"><a style={{textDecoration: 'none'}}>Tin tức</a></li> */}
                         </ul>
                     </div>  
                 </div>
