@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { BrowserRouter, Router, NavLink, Link } from "react-router-dom";
-const resource_url = "https://localhost:44334"
+const resource_url = "http://localhost:3001/"
 class NewItem extends React.Component {
     constructor(props) {
         super(props)

@@ -51,19 +51,7 @@ class Home extends Component {
                 classActiveStyle: 'icon-sidebar ',
                 
             },
-             {
-                //role: [16],
-                name: "Người dùng",
-                url: '/admin/user',
-                imgUrl: '/images/icon/user-icon.svg',
-                classActiveStyle: 'icon-sidebar ',
-            }, {
-                //role: [16384],
-                name: " Slide",
-                url: '/admin/slide',
-                imgUrl: '/images/icon/picture.svg',
-                classActiveStyle: 'icon-sidebar ',
-            },  {
+            {
                 // role: [536870912],
                 name: "Tin tức",
                 url: '/admin/news',
@@ -71,12 +59,12 @@ class Home extends Component {
                 classActiveStyle: 'icon-sidebar news-item ',
                 // classIconDrop:'icon-drop-menu',
                 subMenu: [
-                    {
-                        role: [128],
-                        name: "Danh mục tin tức",
-                        url: '/admin/news-category',
-                        classActiveStyle: 'doctor',
-                    },
+                    // {
+                    //     role: [128],
+                    //     name: "Danh mục tin tức",
+                    //     url: '/admin/news-category',
+                    //     classActiveStyle: 'doctor',
+                    // },
                     {
                         role: [128],
                         name: "Danh sách tin tức",

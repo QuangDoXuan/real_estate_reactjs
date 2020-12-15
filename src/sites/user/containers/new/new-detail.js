@@ -7,7 +7,7 @@ import NewItem from './new-thumbnail'
 import newsProvider from '../../../../data-access/news-provider'
 import NewHotItem from './new-hot-item'
 
-const resource_url = "https://localhost:44334"
+const resource_url = "http://localhost:3001"
 class NewsDetail extends React.Component {
     constructor(props) {
         super(props)
@@ -30,14 +30,12 @@ class NewsDetail extends React.Component {
     }
 
     loadPage() {
-        newsProvider.getAll().then(res => {
-            if (res.Code == 200) {
-                this.setState({
-                    latestNews: res.Data[0],
-                    listNews: res.Data,
-                    hotNews: res.Data.filter(item => item.IsHotNew == true)
-                })
-            }
+        newsProvider.getAll({page: 1, per: 200}).then(res => {
+            this.setState({
+                latestNews: res[0],
+                listNews: res,
+                hotNews: res.filter(item => item.is_hot == 1)
+            })
         }).catch(e => {
             console.log(e)
         })
@@ -76,12 +74,12 @@ class NewsDetail extends React.Component {
                 <div className="container news-detail-container">
                     <div className="row">
                         <div className="col-md-7">
-                            <h2 style={{ fontSize: 26, fontWeight: 'bold', color: "#283c5a" }}>{this.props.location.state.product.NewName}</h2>
-        <p class="user-date mgbt10"><i class="fal fa-clock mgr5" aria-hidden="true"></i>{moment(this.props.location.state.product.createDtime).format("DD-MM-YYYY")}</p>
+                            <h2 style={{ fontSize: 26, fontWeight: 'bold', color: "#283c5a" }}>{this.props.location.state.product.title}</h2>
+        <p class="user-date mgbt10"><i class="fal fa-clock mgr5" aria-hidden="true"></i>{moment(this.props.location.state.product.created_at).format("DD-MM-YYYY")}</p>
 
 
                             <span className={classes.span}>{this.props.location.state.product.NewDescription}</span>
-                            <div style={{ marginTop: 32 }} dangerouslySetInnerHTML={{ __html: this.props.location.state.product.NewBody }} className="content-news">
+                            <div style={{ marginTop: 32 }} dangerouslySetInnerHTML={{ __html: this.props.location.state.product.content }} className="content-news">
 
                             </div>
                         </div>
@@ -98,9 +96,9 @@ class NewsDetail extends React.Component {
                                         return (
                                             <div className="col-xs-12 col-md-12">
                                                 <NewItem key={index}
-                                                    title={item.NewName}
-                                                    image={item.NewImage}
-                                                    createDtime={item.createDtime}
+                                                    title={item.title}
+                                                    image={item.thumnail.url}
+                                                    createDtime={item.created_at}
                                                     data={item}
                                                 // description={item.NewDescription}
                                                 />
@@ -111,9 +109,9 @@ class NewsDetail extends React.Component {
                                         return (
                                             <div className="col-xs-12 col-md-12">
                                                 <NewHotItem key={index}
-                                                    title={item.NewName}
-                                                    image={item.NewImage}
-                                                    createDtime={item.createDtime}
+                                                    title={item.title}
+                                                    image={item.thumnail.url}
+                                                    createDtime={item.created_at}
                                                     data={item}
                                                 // description={item.NewDescription}
                                                 />

@@ -131,13 +131,11 @@ class Project extends React.Component {
     }
     else{
       this.setState({progress:true})
-      projectProvider.searchByName(e.target.value).then(res=>{
-        if(res.Code==200){
+      projectProvider.adminSearchName(e.target.value).then(res=>{
           this.setState({
-            listProjects:res.Data
-          })
-        }
-        this.setState({progress:false})
+            listProjects:res
+          }, ()=> {this.setState({progress:false})})
+          
       }).catch(e=>{
         console.log(e)
       })

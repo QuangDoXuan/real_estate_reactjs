@@ -18,7 +18,7 @@ class CardTop extends React.Component {
     }
 
     getAllProject() {
-        projectProvider.getAll().then(res => {
+        projectProvider.getAll({page: 1, per: 10}).then(res => {
             console.log(res)
             this.setState({
                 lstProject: res

@@ -191,14 +191,14 @@ class ProductCategory extends React.Component {
             <h5 className="title-manage-admin">Danh mục sản phẩm</h5>
           </div>
           <div className="toolbar-admin">
-            <TextField
+            {/* <TextField
               id="outlined-basic"
               className="input-search"
               label="Tên loại sản phẩm"
               margin="normal"
               variant="outlined"
               onChange={(e)=>this.searchByName(e)}
-            />
+            /> */}
             <Button onClick={this.modalAddUpdate} style={{ marginBottom: 32, float: 'right' }} color="secondary" variant="contained" className="btn-add">Thêm mới</Button>
           </div>
         </div>

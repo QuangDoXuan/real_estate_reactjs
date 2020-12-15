@@ -144,23 +144,14 @@ class Company extends React.Component {
   }
 
   searchByName(e){
-    if(e.target.value===''){
-      this.loadPage()
-    }
-    else{
-      this.setState({progress:true})
-      companyProvider.searchByName(e.target.value).then(res=>{
-        if(res.Code==200){
-          this.setState({
-            listCompanies:res.Data
-          })
-        }
-        this.setState({progress:false})
-      }).catch(e=>{
-        console.log(e)
-      })
-    }
-    
+    this.setState({progress:true})
+    companyProvider.searchByName(e.target.value).then(res=>{
+        this.setState({
+          listCompanies:res
+        },()=> {this.setState({progress:false})})
+    }).catch(e=>{
+      console.log(e)
+    })
   }
 
   showModalDelete(item) {

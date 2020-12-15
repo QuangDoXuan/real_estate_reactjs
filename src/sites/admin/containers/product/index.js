@@ -73,25 +73,6 @@ class News extends React.Component {
     });
   };
 
-  getAllProducts() {
-    this.setState({ progress: true })
-
-    let param = {
-      page: 1,
-      per: 10,
-      type: "0"
-    }
-    productProvider.getByPage(param).then(res => {
-        this.setState({
-          listProducts: res
-        })
-      this.setState({ progress: false })
-    }).catch(e => {
-      console.log(e)
-      this.setState({ progress: false })
-    })
-  }
-
   getByPage() {
 
     let param = {
@@ -180,19 +161,10 @@ class News extends React.Component {
   }
   search=(e)=>{
       let name = e.target.value
-      if(name==''){
-        productProvider.getAll().then(res=>{
-          this.setState({
-            listProducts:res.Data
-           
-          })
-        })
-      }
-      else{
         this.setState({progress:true})
         productProvider.searchByName(name).then(res=>{
           this.setState({
-            listProducts: res.Data,
+            listProducts: res,
             // stt,
             // total: this.state.listProducts.length,
           })
@@ -200,8 +172,6 @@ class News extends React.Component {
         }).catch(e=>{
           console.log(e)
         })
-      }
-
   }
 
   render() {
@@ -245,7 +215,7 @@ class News extends React.Component {
               {listProducts.length > 0 ? listProducts.map((item, index) => {
                 return (<TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell onClick={()=>this.modalDetailImage(item)} >{item.name}</TableCell>
+                  <TableCell>{item.name}</TableCell>
                   {/* <TableCell>{item.price01}</TableCell> */}
                   <TableCell>{item.price01}</TableCell>
                   <TableCell >{item.area}</TableCell>

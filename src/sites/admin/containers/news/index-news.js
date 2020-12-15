@@ -28,9 +28,10 @@ import ConfirmDialog from '../../components/confirm';
 import stringUtils from '../../../../resources/stringUtils'
 
 import clientUtils from '../../../../utils/client-utils'
+import moment from 'moment'
 
 import axios from 'axios';
-const resource_url ="https://localhost:44334"
+const resource_url ="http://localhost:3001"
 
 
 class News extends React.Component {
@@ -57,7 +58,6 @@ class News extends React.Component {
     }
 
     loadPage(){
-      this.getAllNews()
       this.getByPage();
     }
 
@@ -76,41 +76,19 @@ class News extends React.Component {
       });
     };
 
-    getAllNews(){
-      this.setState({progress:true})
-      newsProvider.getAll().then(res=>{
-        if(res.Code&& res.Code==200){
-          this.setState({
-            listNews:res.Data
-          })
-        }
-        else{
-          this.setState({
-            listNews:[]
-          })
-        }
-        this.setState({progress:false})
-      }).catch(e=>{
-        console.log(e)
-        this.setState({progress:false})
-      })
-    }
-
     getByPage(){
-
       let param = {
-        pagesize: this.state.size,
-        pagenumber: this.state.page 
+        page: this.state.page,
+        per: this.state.size 
       }
      
       newsProvider.getByPage(param).then(res=>{
-        let stt = 1 + (param.pagenumber) * param.pagesize;
+        let stt = 1 + (param.page) * param.per;
         console.log(res)
         this.setState({
-          listNews:res.Data.Results,
+          listNews:res,
           stt,
           total:this.state.listNews.length,
-          // totalPerPage:res.Data.TotalNumberOfRecords
         })
       }).catch(e=>{
         console.log(e)
@@ -144,18 +122,15 @@ class News extends React.Component {
     delete=(type)=>{
       this.setState({ confirmDialog: false })
       if(type==1){
-        newsProvider.deleteNew(this.state.tempDelete.NewId).then(res=>{
-          if(res.Code == 200){
-            toast.success("Xóa thành công",{
-              position:toast.POSITION.TOP_RIGHT
-            })
-            this.loadPage()
-          }
-          else{
-            toast.error("Xóa thất bại",{
-              position:toast.POSITION.TOP_RIGHT
-            })
-          }
+        newsProvider.deleteNew(this.state.tempDelete.id).then(res=>{
+          toast.success("Xóa thành công",{
+            position:toast.POSITION.TOP_RIGHT
+          })
+          this.loadPage()
+        }).catch(e=>{
+          toast.error("Xóa thất bại",{
+            position:toast.POSITION.TOP_RIGHT
+          })
         })
       }
 
@@ -167,7 +142,6 @@ class News extends React.Component {
           tempDelete: item
       })
   }
-
 
     render(){
       const { page, size,stt, total, progress,listNews,dataNews } = this.state
@@ -196,13 +170,9 @@ class News extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tên tin tức </TableCell>
-                <TableCell>Loại tin tức</TableCell>
+                <TableCell>Tiêu đề </TableCell>
                 <TableCell>Hình ảnh</TableCell>
-                <TableCell>Trạng thái</TableCell>
                 <TableCell>Ngày tạo</TableCell>
-                <TableCell>Tag</TableCell>
-
                 <TableCell>Tùy chọn</TableCell>
               </TableRow>
             </TableHead>
@@ -213,12 +183,9 @@ class News extends React.Component {
                 return (
                 <TableRow key={index}>
               <TableCell>{index+stt}</TableCell>
-              <TableCell onClick={()=>this.modalDetail(item)}>{item.NewName}</TableCell>
-                <TableCell onClick={()=>this.modalDetail(item)}>{item.NewCategoryId==1?"Bán":"Thuê"}</TableCell>
-                <TableCell onClick={()=>this.modalDetail(item)}><img style={{ width: 150, margin: '4px 0px' }}src={resource_url+ item.NewImage}/></TableCell>
-                <TableCell onClick={()=>this.modalDetail(item)}>{item.Enable}</TableCell>
-                    <TableCell onClick={()=>this.modalDetail(item)}>{item.CreateDTime}</TableCell>
-                <TableCell onClick={()=>this.modalDetail(item)}>{item.NewTag}</TableCell>
+              <TableCell onClick={()=>this.modalDetail(item)}>{item.title}</TableCell>
+                <TableCell onClick={()=>this.modalDetail(item)}><img style={{ width: 150, margin: '4px 0px' }}src={resource_url + item.thumnail.url}/></TableCell>
+                <TableCell onClick={()=>this.modalDetail(item)}>{moment(item.created_at).format("DD-MM-YYYY")}</TableCell>
 
                     <TableCell className="icon-sidebar">
                       <Tooltip title="Sửa">

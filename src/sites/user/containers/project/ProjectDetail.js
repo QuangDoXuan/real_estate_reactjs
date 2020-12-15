@@ -71,7 +71,7 @@ class ProjectDetail extends React.Component {
             margin: 2,
             autoplay: true,
             nav: false,
-            dots: true,
+            dots: false,
             items: 1,
         };
         const options2 = {

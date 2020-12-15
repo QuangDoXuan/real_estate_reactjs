@@ -72,7 +72,7 @@ export default {
 
     searchByName(name){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('get',constants.api.product.searchByName+'?ProductName='+name,{}).then(res=>{
+            clientUtils.requestApi('get', '/admin_s_company/?name=' + name,{}).then(res=>{
                 resolve(res)
             }).catch(e=>{
                 reject(e)

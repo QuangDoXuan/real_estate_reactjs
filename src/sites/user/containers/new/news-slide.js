@@ -36,9 +36,9 @@ class SlideNews extends React.Component {
                         {news.map((d, index) => {
                             return (
                                 <div key={index} className="col-md-4 item-news">
-                                    <NewItem title={d.NewName}
-                                             image={d.NewImage}
-                                             data={d}
+                                    <NewItem title={d.title}
+                                                image={d.thumnail.url}
+                                                data={d}
                                     />
                                 </div>
                                 

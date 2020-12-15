@@ -17,16 +17,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import MenuItem from '@material-ui/core/MenuItem';
-//Component
 
-//data-access
-import newsProvider from '../../../../data-access/news-provider'
-import imageProvider from '../../../../data-access/image-provider'
 import newCategoryProvider from '../../../../data-access/new-category-provider'
 
 import clientUtils from '../../../../utils/client-utils'
 import axios from 'axios';
-const resource_url = "https://localhost:44334"
+const resource_url = "http://localhost:3001"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -53,19 +49,17 @@ class ModalAddUpdate extends React.Component {
         this.state = {
             open: true,
             dataNew: this.props.data,
-            newName: this.props.data && this.props.data.NewName ? this.props.data.NewName : '',
-            sortName: this.props.data && this.props.data.NewSortName ? this.props.data.NewSortName : '',
-            description: this.props.data && this.props.data.NewDescription ? this.props.data.NewDescription : '',
-            newBody: this.props.data && this.props.data.NewBody ? this.props.data.NewBody : '',
-            count: this.props.data && this.props.data.Count ? this.props.data.Count : 1,
-            isHotNew: this.props.data.IsHotNew && this.props.IsHotNew ? this.props.IsHotNew : true,
-            newTag: this.props.data && this.props.data.NewTag ? this.props.data.NewTag : null,
-            image: this.props.data && this.props.data.NewImage ? this.props.data.NewImage : ' ',
+            newName: this.props.data && this.props.data.title ? this.props.data.title : '',
+            description: this.props.data && this.props.data.description ? this.props.data.description : '',
+            newBody: this.props.data && this.props.data.content ? this.props.data.content : '',
+            thumnail: this.props.data && this.props.data.thumnail ? this.props.data.thumnail : ' ',
+            isHotNew: this.props.data && this.props.data.is_hot ? this.props.data.is_hot: 0,
+            isPresent: this.props.data && this.props.data.is_present ? this.props.data.is_present: 0,
             imageName: '',
-            newCategory: this.props.data && this.props.data.NewCategoryId ? this.props.data.NewCategoryId : '',
             listCategory: [],
             imagePreviewUrl: '',
-            imageFake:''
+            imageFake:'',
+            showImage: true
 
         }
         this.data = JSON.stringify(this.props.data);
@@ -73,25 +67,15 @@ class ModalAddUpdate extends React.Component {
     }
 
     componentDidMount() {
-        this.getNewCategory()
     }
-
-    getNewCategory() {
-        newCategoryProvider.getAll().then(res => {
-            this.setState({
-                listCategory: res.Data
-            })
-        }).catch(e => {
-            console.log(e)
-        })
-    }
-
 
     handleImageChange = (e) => {
         this.setState({
+            thumnail: e.target.files[0],
             image: e.target.files[0],
             imageName: e.target.files[0].name,
-            imageFake: URL.createObjectURL(e.target.files[0])
+            imageFake: URL.createObjectURL(e.target.files[0]),
+            showImage: false
         })
        
     };
@@ -99,16 +83,10 @@ class ModalAddUpdate extends React.Component {
 
     _handleImageChange(e) {
         e.preventDefault();
-
-        // Assuming only image
-        // Assuming only image
         this.setState({
-            image: URL.createObjectURL(e.target.files[0])
+            thumnail: URL.createObjectURL(e.target.files[0])
           })// Would see a path?
-        // TODO: concat files // Would see a path?
-        // TODO: concat files
     }
-
 
     handleClose = () => {
         this.props.callbackOff()
@@ -116,64 +94,56 @@ class ModalAddUpdate extends React.Component {
 
     create = () => {
         const { dataNew, newName, sortName, description, newBody, count, newTag, image } = this.state;
-        let id = dataNew ? dataNew.NewId : '';
+        let id = dataNew ? dataNew.id : '';
         let formData = new FormData();
-        formData.append("NewId", this.state.dataNew.NewId)
-        formData.append('NewCategoryId', this.state.newCategory)
-        formData.append('NewName', this.state.newName)
-        formData.append('NewDescription', this.state.description)
-        formData.append('NewBody', this.state.newBody)
-        formData.append('Count', this.state.count)
-        formData.append('IsHotNew', this.state.isHotNew)
-        formData.append('NewTag', this.state.newTag)
-        formData.append('image', this.state.image)
+        formData.append('title', this.state.newName)
+        formData.append('description', this.state.description)
+        formData.append('content', this.state.newBody)
+        formData.append('thumnail', this.state.thumnail)
+        formData.append('is_hot', this.state.isHotNew)
+        formData.append('is_present', this.state.isPresent)
 
-        if (dataNew && dataNew.NewId) {
+        if (dataNew && dataNew.id) {
             axios({
-                url: "https://localhost:44334/api/News/update",
+                url: "http://localhost:3001/admin/posts/" + id,
                 method: 'PUT',
                 data: formData,
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',
-                    // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Cập nhật tin tức thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose();
-                    }
+            .then(res => {
+                toast.success("Cập nhật tin tức thành công", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
-                .catch(e => {
-                    toast.error("Cập nhật tin tức không thành công!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
-                    this.handleClose()
+                this.handleClose();
+            })
+            .catch(e => {
+                toast.error("Cập nhật tin tức không thành công!", {
+                    position: toast.POSITION.TOP_RIGHT
                 })
+                this.handleClose()
+            })
         } else {
 
             axios({
-                url: "https://localhost:44334/api/News/create",
+                url: "http://localhost:3001/admin/posts",
                 method: 'POST',
                 data: formData,
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',
-                    // 'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
                 .then(res => {
                     console.log(res)
-                    if (res.data.Code == 200) {
-                        toast.success("Tạo mới tin tức thành công", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
-                        this.handleClose();
-                    }
+                    toast.success("Tạo mới tin tức thành công", {
+                        position: toast.POSITION.TOP_RIGHT
+                    })
+                    this.handleClose();
                 })
                 .catch(e => {
                     toast.error("Tạo mới tin tức không thành công!", {
@@ -188,7 +158,6 @@ class ModalAddUpdate extends React.Component {
 
 
     render() {
-        console.log(this.props.data.NewImage)
         const { classes } = this.props
         const { dataNew, newCategory, newName, sortName, description, newBody, image, count, isHotNew, newTag } = this.state
         return (
@@ -214,35 +183,10 @@ class ModalAddUpdate extends React.Component {
                                     validators={["required"]}
                                     errorMessages={['Tên tin tức không được bỏ trống!']}
                                     onChange={(event) => {
-                                        this.data2.newName = event.target.value;
+                                        this.data2.title = event.target.value;
                                         this.setState({ newName: event.target.value });
                                     }}
                                 />
-                            </Grid>
-
-                            <Grid item xs={12} md={3}>Loại tin tức(*)</Grid>
-                            <Grid item xs={12} md={9}>
-                                <SelectValidator
-                                    value={newCategory}
-                                    className={classes.textField}
-                                    validators={["required"]}
-                                    errorMessages={['Loại tin tức không được bỏ trống!']}
-                                    onChange={(event) => {
-                                        this.data2.newCategory = event.target.value;
-                                        this.setState({ newCategory: event.target.value });
-                                    }}
-
-                                >
-                                    {this.state.listCategory.map((item, index) => {
-                                        return (
-                                            <MenuItem key={index} value={item.NewCategoryId}>{item.NewCategoryName}</MenuItem>
-                                        )
-
-                                    })}
-
-
-
-                                </SelectValidator>
                             </Grid>
 
                             <Grid item xs={12} md={3}>Hình ảnh(*)</Grid>
@@ -263,12 +207,12 @@ class ModalAddUpdate extends React.Component {
                                             src="/image-icon.png" />
                                     </Button>
                                 </label>
-                                {/* {this.props.data.NewImage? <img style={{width:100, height:100}} src={resource_url+this.state.image}/>:
-                                    
-                                } */}
-                                 <img style={{width:100, height:100}} src={this.state.imageFake}/>
-                                    
-                                {/* <div className='input-image'>{this.state.image}</div> */}
+                                {this.state.showImage && this.props.data && this.props.data.id?<img src={this.props.data.thumnail.url != null ? resource_url + this.props.data.thumnail.url : '' } style={{ width: 150, marginTop: 16, border: "1px soild" }} />
+                                : <img src={this.state.imageFake} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
+                                }
+                                {this.state.image && 
+                                    <div className='input-image'>{this.state.image.name}</div>
+                                }
                             </Grid>
                             <Grid item xs={12} md={3}>Mô tả</Grid>
                             <Grid item xs={12} md={9}>
@@ -285,20 +229,40 @@ class ModalAddUpdate extends React.Component {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={3}>Tag</Grid>
+                            <Grid item xs={12} md={3}>Nổi bật</Grid>
                             <Grid item xs={12} md={9}>
-                                <TextValidator
-                                    value={newTag}
-                                    placeholder="tag"
+                                <SelectValidator
+                                    value={this.state.isPresent}
                                     className={classes.textField}
+                                    validators={["required"]}
                                     onChange={(event) => {
-                                        this.data2.newTag = event.target.value;
-                                        this.setState({ newTag: event.target.value })
+                                        this.data2.is_hot = event.target.value;
+                                        this.setState({ isPresent: event.target.value });
                                     }}
-                                    validators={['required']}
-                                    errorMessages={['Tag không được để trống']}
-                                />
+
+                                >
+                                    <MenuItem value={0}>Mặc định</MenuItem>
+                                    <MenuItem value={1}>Nổi bật</MenuItem>
+                                </SelectValidator>
                             </Grid>
+
+                            <Grid item xs={12} md={3}>Tin hot</Grid>
+                            <Grid item xs={12} md={9}>
+                                <SelectValidator
+                                    value={isHotNew}
+                                    className={classes.textField}
+                                    validators={["required"]}
+                                    onChange={(event) => {
+                                        this.data2.is_hot = event.target.value;
+                                        this.setState({ isHotNew: event.target.value });
+                                    }}
+
+                                >
+                                    <MenuItem value={0}>Mặc định</MenuItem>
+                                    <MenuItem value={1}>Hot</MenuItem>
+                                </SelectValidator>
+                            </Grid>
+
 
                             <Grid item xs={12} md={3}>Nội dung</Grid>
                             <Grid item xs={12} md={9}>
@@ -306,16 +270,8 @@ class ModalAddUpdate extends React.Component {
                                     data={newBody}
                                     editor={ClassicEditor}
 
-                                    config={{ckfinder: {
-                                        // Upload the images to the server using the CKFinder QuickUpload command.
-                                        // uploadUrl: 'https://44400.cke-cs.com/easyimage/upload/'
-                                        uploadUrl: 'https://localhost:44334/Uploads/'
-                                      }}}
-
                                     onChange={(event, editor) => {
-                                        const data = editor.getData();
-                                        console.log({ event, editor, data });
-                                        this.setState({ newBody: data })
+                                        this.setState({ newBody: editor.getData() })
                                     }}
 
                                 />

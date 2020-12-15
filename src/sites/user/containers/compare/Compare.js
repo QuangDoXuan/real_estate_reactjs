@@ -23,7 +23,9 @@ class Compare extends React.Component {
         this.state = {
             compared: [],
             recommend: [],
-            progress: false
+            progress: false,
+            lstProject: [],
+            name: ''
         }
     }
 
@@ -47,11 +49,45 @@ class Compare extends React.Component {
         }, ()=>{this.state.compared.push(item)})
         
         this.setState({
-            compared: this.state.compared
+            compared: this.state.compared,
+            lstProject: [],
+            name: ''
         })
         setTimeout(()=>{
             this.setState({progress: false})
-        }, 500)
+        }, 300)
+    }
+
+    searchByName(name) {
+        this.setState({
+            name: name
+        }, () => {this.search()})
+    }
+
+    search(){
+        projectProvider.searchByName(this.state.name).then(res=>{
+            console.log(res)
+            this.setState({
+                lstProject: res
+            })
+        }).catch(e=>{
+            console.log(e)
+        })
+    }
+
+    removeItem(index) {
+
+        this.setState({
+            progress: true
+        }, ()=>{this.state.compared.splice(index, 1)})
+        
+        this.setState({
+            compared: this.state.compared,
+        })
+
+        setTimeout(()=>{
+            this.setState({progress: false})
+        }, 300)
     }
 
     render() {
@@ -78,16 +114,26 @@ class Compare extends React.Component {
                                     </h3>
                                         <a className="compare-logo" href="https://homedy.com/" title="Bất động sản" />
                                     <div className="box-input">
-                                        <input type="text" className="btn-search" placeholder="Tìm kiếm để so sánh" />
+                                        <input onChange={(event)=> this.searchByName(event.target.value)} type="text" style={{outline: 'none'}} value={this.state.name} className="btn-search" placeholder="Tìm kiếm để so sánh" />
                                         <span className="icon-search" />
                                         <span className="search-close" />
                                         <span className="search-loading" />
                                     </div>
-                                    <div className="suggestions">
-                                        <div className="container">
+                                    <div className="suggestions" style={{position: 'relative' }}>
+                                        {this.state.lstProject.length > 0 && this.state.name !== ''
+                                            &&
                                             <div className="content-suggestions">
+                                                {this.state.lstProject.map((item, index) =>{
+                                                    return(
+                                                        <div key={index} className="search-item" onClick={()=>this.addCompare(item)}>
+                                                            <div className="title-project">{item.name}</div>
+                                                            <div className="address">{item.address}</div>
+                                                        </div>
+                                                    )
+                                                    
+                                                }) }
                                             </div>
-                                        </div>
+                                        }
                                     </div>
                                     <p className="note-compare">Chọn tối đa 3 dự án để so sánh.</p>
                                     <div className="icon-compare">
@@ -98,7 +144,7 @@ class Compare extends React.Component {
 
                             <div className="one-region-cp first-item">
                                 {this.state.compared.length > 0 ?
-                                <div className="item-project">
+                                <div className="item-project" style={{position: 'relative'}}>
                                     <div className="compare-img">
                                         <a className href="/lumiere-riverside-pj43332956" title="Lumière Riverside">
                                             <img className="lazy img-defauts" src={this.state.compared[0].image} style={{}} />
@@ -111,7 +157,7 @@ class Compare extends React.Component {
                                         </a>
                                         <p className="address">{this.state.compared[0].address}</p>
                                     </div>
-                                    <div className="act-project"></div>
+                                    <div onClick={()=>this.removeItem(0)}  className="act-project"><img src="https://static.homedy.com/src/images/du-an/compare/close.svg"/></div>
                                 </div>
                                 :
                                 <div className="item-project">
@@ -125,7 +171,7 @@ class Compare extends React.Component {
                             </div>
                             <div className="one-region-cp second-item">
                                 {this.state.compared.length == 2 ? 
-                                    <div className="item-project">
+                                    <div className="item-project" style={{position: 'relative'}}>
                                         <div className="compare-img">
                                             <a className href="/lumiere-riverside-pj43332956" title="Lumière Riverside">
                                                 <img className="lazy img-defauts" src={this.state.compared[1].image} style={{}} />
@@ -139,7 +185,7 @@ class Compare extends React.Component {
                                             <p className="address">{this.state.compared[1].address}</p>
                                         </div>
                                     
-                                        <div className="act-project"></div>
+                                        <div onClick={()=>this.removeItem(1)} className="act-project"><img src="https://static.homedy.com/src/images/du-an/compare/close.svg"/></div>
                                     </div>
                                 :
                                 <div className="item-project">
@@ -187,11 +233,11 @@ class Compare extends React.Component {
                                         return(
                                             <div className="item">
                                                 <div className="item-top">
-                                                    <a href="/cong-ty-cp-dau-tu-thu-thiem-co94" title={item.company_name}>
+                                                    <a title={item.company_name}>
                                                     <div className="investor">
                                                         <div className="content-investor">
                                                             <span><img className="image-investor" src={item.company_image}/></span>
-                                                            <span className="name">{item.name}</span>
+                                                            <span className="name">{item.company_name}</span>
                                                         </div>
                                                     </div>
                                                     </a>
@@ -199,7 +245,6 @@ class Compare extends React.Component {
                                                 </div>
                                                 <p className="txt-text">Đang cập nhật</p>
                                                 <p className="txt-text">{item.company_fund || 'Đang cập nhật'}</p>
-                                                <a className="see-more-detail" href="/cong-ty-cp-dau-tu-thu-thiem-co94">Xem chi tiết</a>
                                             </div>
                                         )
                                     })}
@@ -216,18 +261,18 @@ class Compare extends React.Component {
                                         <p className="title">Giá/m2</p>
                                         <p className="title">Tổng số vốn đầu tư</p>
                                         <p className="title">Diện tích khu đất</p>
-                                        <p className="title">Diện tích xây dựng</p>
+                                        <p className="title">Trạng thái xây dựng</p>
                                         <p className="title">Mật độ xây dựng</p>
                                     </div>
                                     {this.state.compared.map((item, index)=>{
                                         return(
                                             <div key={index} className="item">
-                                                <p className="txt-text">{item.price_range}</p>
-                                                <p className="txt-text">{item.pricem2}</p>
+                                                <p className="txt-text">{item.price_range || 'Đang cập nhật'}</p>
+                                                <p className="txt-text">{item.pricem2 || 'Đang cập nhật'}</p>
                                                 <p className="txt-text">Đang cập nhật</p>
-                                                <p className="txt-text">{item.total_area}</p>
-                                                <p className="txt-text">{item.build_status}</p>
-                                                <p className="txt-text">45 %</p>
+                                                <p className="txt-text">{item.total_area || 'Đang cập nhật'}</p>
+                                                <p className="txt-text">{item.build_status || 'Đang cập nhật'}</p>
+                                                <p className="txt-text">{item.scale || 'Đang cập nhật'}</p>
                                             </div>
                                         )
                                     })}
@@ -239,29 +284,31 @@ class Compare extends React.Component {
                         : 
                             <div className="row row-compare" style={{marginTop: 12, marginBottom: 80}}></div>
                         }
-                        <div className="row row-compare">
-                        <LoadScript
-                                googleMapsApiKey='AIzaSyBU20LsK6P6h4x7a41wAyDoOoEaqGr6GC4&libraries=drawing'
-                            >
-                            <GoogleMap
-                                mapContainerStyle={containerStyle}
-                                center={center}
-                                zoom={12}
-                            >
-                                {this.state.compared.map((item, index)=>{
-                                    return(
-                                        <Marker
-                                            key={index}
-                                            position={{lat: parseFloat(item.lat), lng: parseFloat(item.lon)}}
-                                            title={item.name}
-                                            label={item.name}
-                                        />   
-                                    )
-                                })}
-                              
-                            </GoogleMap>
-                        </LoadScript>
-                        </div>
+                        {this.state.compared.length == 2 && 
+                            <div className="row row-compare">
+                                <LoadScript
+                                        googleMapsApiKey='AIzaSyBU20LsK6P6h4x7a41wAyDoOoEaqGr6GC4&libraries=drawing'
+                                    >
+                                    <GoogleMap
+                                        mapContainerStyle={containerStyle}
+                                        center={center}
+                                        zoom={12}
+                                    >
+                                        {this.state.compared.map((item, index)=>{
+                                            return(
+                                                <Marker
+                                                    key={index}
+                                                    position={{lat: parseFloat(item.lat), lng: parseFloat(item.lon)}}
+                                                    title={item.name}
+                                                    label={item.name}
+                                                />   
+                                            )
+                                        })}
+                                    
+                                    </GoogleMap>
+                                </LoadScript>
+                            </div>
+                        }
                     </div>
                 </div>
                 {this.state.progress == true && 

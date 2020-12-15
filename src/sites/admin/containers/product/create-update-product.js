@@ -100,7 +100,7 @@ class ModalAddUpdate extends React.Component {
     }
 
     getAllProjects(){
-        projectProvider.getAll().then(res=>{
+        projectProvider.getAll({page: 1, per: 9999}).then(res=>{
             console.log(res)
             this.setState({
                 projects: res
@@ -253,7 +253,7 @@ class ModalAddUpdate extends React.Component {
                                             src="/image-icon.png" />
                                     </Button>
                                 </label>
-                                {this.props.data && this.props.data.id?<img src={resource_url + this.state.thumnail.url} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
+                                {this.props.data && this.props.data.id?<img src={this.props.data.thumnail.url != null ? this.props.data.thumnail.url : this.props.data.remote_thumbnail } style={{ width: 150, marginTop: 16, border: "1px soild" }} />
                                 : <img src={this.state.imageFake} style={{ width: 150, marginTop: 16, border: "1px soild" }} />
                             }
                                 

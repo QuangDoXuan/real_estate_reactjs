@@ -71,7 +71,7 @@ class AllHireProduct extends React.Component {
     this.setState({
       category: item.name, 
       openSelectCategory: !this.state.openSelectCategory
-    })
+    },()=>this.search())
   }
 
   onSelectPrice(item){
@@ -94,6 +94,7 @@ class AllHireProduct extends React.Component {
   }
 
   search(){
+    this.setState({progress: true})
     let body = {
       page: this.state.page,
       per: this.state.per,
@@ -107,7 +108,7 @@ class AllHireProduct extends React.Component {
     productProvider.filter(body).then(res=>{
       this.setState({
         listSell: res
-      })
+      }, ()=>this.setState({progress: false}))
     }).catch(e=>{
       console.log(e)
     })
@@ -218,6 +219,11 @@ class AllHireProduct extends React.Component {
           </div>
 
         </div>
+        {this.state.progress == true && 
+            <div className="loading-overlay">
+                <img src="/images/loading.webp"/>
+            </div>
+        }
       </div>
     )
   }

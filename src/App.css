@@ -1332,3 +1332,68 @@ span.name {
 .compare-img {
   height: 180px;
 }
+.content-suggestions {
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 5px;
+  z-index: 9999;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+}
+.search-item {
+  padding: 10px 12px 10px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  cursor: pointer;
+}
+.search-item .title-project {
+  color: #404143;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  height: 1.3em;
+  line-height: 1.4em;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  font-size: 13px;
+}
+.search-item .address {
+  color: #595959;
+  font-weight: 500;
+  height: 1.3em;
+  line-height: 1.4em;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  font-size: 13px;
+}
+.content-suggestions .search-item:hover {
+  background: #ddd;
+}
+.content-suggestions .search-item {
+  padding: 10px 12px 10px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  cursor: pointer;
+}
+.note-compare {
+  color: #4a4a4a;
+  font-size: 14px;
+  font-style: italic;
+  padding: 16px 11px 0 0;
+  line-height: 1.5;
+}
+.act-project {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.item-box-new-hot {
+  width: 100%;
+}

@@ -30,7 +30,8 @@ class AllProduct extends React.Component {
       toArea: 100000,
       area:'',
       page: 1,
-      size: 20
+      size: 20,
+      category_id:''
     }
   }
   componentDidMount(){
@@ -70,8 +71,9 @@ class AllProduct extends React.Component {
   onSelectCategory(item){
     this.setState({
       category: item.name, 
+      category_id: item.id,
       openSelectCategory: !this.state.openSelectCategory
-    })
+    }, ()=>this.search())
   }
 
   onSelectPrice(item){
@@ -94,6 +96,7 @@ class AllProduct extends React.Component {
   }
 
   search(){
+    this.setState({progress: true})
     let body = {
       page: this.state.page,
       per: this.state.per,
@@ -102,6 +105,7 @@ class AllProduct extends React.Component {
       areaStart: this.state.fromArea,
       areaEnd: this.state.toArea,
       address: this.state.address,
+      categoryId: this.state.category_id,
       parentCategory: 1
     }
     productProvider.filter(body).then(res=>{
@@ -111,6 +115,7 @@ class AllProduct extends React.Component {
     }).catch(e=>{
       console.log(e)
     })
+    setTimeout(()=>this.setState({progress: false}),300)
   }
 
   handlePageChange(pageNumber) {
@@ -218,6 +223,11 @@ class AllProduct extends React.Component {
           </div>
 
         </div>
+        {this.state.progress == true && 
+            <div className="loading-overlay">
+                <img src="/images/loading.webp"/>
+            </div>
+        }
       </div>
     )
   }

@@ -48,10 +48,10 @@ class Map extends React.Component {
     }
 
     onRectangleComplete = (rectangle) => {
-        console.log(rectangle)
+        this.setState({progress: true})
         let location = {
-            south: rectangle.getBounds().Sa.i,
-            north: rectangle.getBounds().Sa.j,
+            south: rectangle.getBounds().Ra.i,
+            north: rectangle.getBounds().Ra.j,
             west: rectangle.getBounds().Wa.i,
             east: rectangle.getBounds().Wa.j
         }
@@ -59,12 +59,18 @@ class Map extends React.Component {
             drawMode: null
         })
         productProvider.searchByLocation(location).then(res=>{
-
             console.log(res)
             this.setState({
                 markers: res
+            }, ()=>{
+                setTimeout(()=>{
+                    this.setState({progress: false})
+                }, 300)
             })
         }).then(e=>{
+            setTimeout(()=>{
+                this.setState({progress: false})
+            }, 300)
             console.log(e)
         })
     }
@@ -126,6 +132,11 @@ class Map extends React.Component {
 
                     })}
                 </div>
+                {this.state.progress == true && 
+                    <div className="loading-overlay">
+                        <img src="/images/loading.webp"/>
+                    </div>
+                }
             </div>
           )
     }

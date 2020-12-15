@@ -9,10 +9,10 @@ export default {
 
     getByPage(param) {
         let parameters =
-            (param.pagesize ? '?pagesize=' + param.pagesize : '?pagesize=' + 10) +
-            (param.pagenumber ? '&pagenumber=' + param.pagenumber : '&pagenumber=' + - 0)
+            (param.page ? '?page=' + param.page : '?page=' + 1) +
+            (param.per ? '&per=' + param.per : '&per=' + 10)
         return new Promise((resolve, reject) => {
-            clientUtils.requestApi("get", constants.api.news.getByPage + parameters, {}).then(x => {
+            clientUtils.requestApi("get", '/admin/posts/'+ parameters, {}).then(x => {
                 resolve(x);
             }).catch(e => {
                 reject(e);
@@ -20,9 +20,12 @@ export default {
         })
     },
 
-    getAll() {
+    getAll(param) {
+        let parameters =
+        (param.page ? '?page=' + param.page : '?page=' + 1) +
+        (param.per ? '&per=' + param.per : '&per=' + 10)
         return new Promise((resolve, reject) => {
-            clientUtils.requestApi("get", constants.api.news.getAll ,{}).then(x => {
+            clientUtils.requestApi("get", '/posts' + parameters ,{}).then(x => {
                 resolve(x);
             }).catch(e => {
                 reject(e);
@@ -42,7 +45,7 @@ export default {
 
     deleteNew(id){
         return new Promise((resolve,reject)=>{
-            clientUtils.requestApi('delete',constants.api.news.delete+"?NewId="+id).then(x=>{
+            clientUtils.requestApi('delete','/admin/posts/' + id).then(x=>{
                 resolve(x)
             }).catch(e=>{
                 reject(e)

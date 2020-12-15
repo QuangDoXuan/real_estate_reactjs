@@ -67,5 +67,23 @@ export default {
                 reject(e);
             })
         })
+    },
+    searchByName(name){
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi("get", "/project_compare?name=" + name, {}).then(x => {
+                resolve(x);
+            }).catch(e => {
+                reject(e);
+            })
+        })
+    },
+    adminSearchName(name) {
+        return new Promise((resolve, reject) => {
+            clientUtils.requestApi("get", "/admin_search_project?name=" + name, {}).then(x => {
+                resolve(x);
+            }).catch(e => {
+                reject(e);
+            })
+        })
     }
 }

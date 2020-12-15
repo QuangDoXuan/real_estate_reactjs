@@ -22,22 +22,17 @@ class NewContainer extends React.Component {
     }
 
     loadPage(){
-        newsProvider.getAll().then(res =>{
-            if(res.Code==200){
-                this.setState({
-                    latestNews:res.Data[0],
-                    listNews: res.Data,
-                    hotNews: res.Data.filter(item=>item.IsHotNew==true)
-                })
-            }
+        newsProvider.getAll({page: 1, per: 199}).then(res =>{
+            console.log(res)
+            this.setState({
+                latestNews:res.filter(x=>x.is_present == 1),
+                listNews: res,
+                hotNews: res.filter(x=>x.is_hot == 1)
+            })
         }).catch(e=>{
             console.log(e)
         })
     }
-
-
-
-
 
     render() {
         const { classes } = this.props
@@ -55,33 +50,19 @@ class NewContainer extends React.Component {
 
                     <div className="row">
                         <div style={{ display: 'flex' }} className=" col-md-8">
-                            <div className="col-md-9 item-box-new-hot">
-                                <NewItem image={this.state.latestNews.NewImage}
-                                         title={this.state.latestNews.NewName}
-                                         data={this.state.latestNews}
-                                />
-                                {/* <img style={{ width: '100%' }} src="https://news.landber.com/upload/post/1917/w235_h135_moi-gioi-bds-chuyen-nghiepjpg.jpg" />
-                                <a className="hot-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</a> */}
-
+                            <div className="item-box-new-hot">
+                                {/* {this.state.latestNews.thumnail != null && */}
+                                { this.state.listNews.filter(x=>x.is_present == 1).map((item, index)=> {
+                                    return (
+                                        <NewItem image={item.thumnail.url}
+                                        title={item.title}
+                                        data={item}
+                                    />
+                                    )
+                                }) }
+                                
+                                {/* } */}
                             </div>
-                            <div className="flr col-md-3 related-news">
-                                {this.state.listNews.map(item=>item.NewName).map((item,index)=>{
-
-                                        return(
-                                        <p className="related-title" key={index}>{item}</p>
-                                        )
-
-                                })}
-
-                                {/* <p className="related-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</p>
-                                <p className="related-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</p>
-                                <p className="related-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</p>
-
-                                <p className="related-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</p>
-                                <p className="related-title">Môi giới bất động sản chuyên nghiệp và những điều cần phải học khi làm việc</p> */}
-                            </div><br />
-
-
                         </div>
                         <div className="col-md-4">
                             <a  target="_blank" rel="nofollow">
@@ -111,9 +92,9 @@ class NewContainer extends React.Component {
                             return(
                                 <div className="col-xs-12 col-md-6 one-news-hot">
                                 <NewItem key={index}
-                                        image={item.NewImage}
-                                        title={item.NewName}
-                                        description={item.NewDescription}
+                                        image={item.thumnail.url}
+                                        title={item.name}
+                                        description={item.description}
                                         data={item}
                                 />
                                 </div>
@@ -135,9 +116,9 @@ class NewContainer extends React.Component {
                                 return(
                                     <div className="col-xs-12 col-md-12">
                                     <NewItem key={index}
-                                             title={item.NewName}
-                                             image={item.NewImage}
-                                             description={item.NewDescription}
+                                             title={item.title}
+                                             image={item.thumnail.url}
+                                             description={item.description}
                                              data={item}
                                     />
                                     </div>
